@@ -1,0 +1,10 @@
+{
+	"title": "Batch Uploader",
+	"locked": true,
+	"files": [
+		"mootools-trunk.js",
+		"../../source/Swiff.Uploader.js",
+		"../../source/Fx.ProgressBar.js",
+		"../../source/FancyUpload2.js"
+	]
+}

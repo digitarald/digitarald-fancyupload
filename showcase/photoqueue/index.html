@@ -1,0 +1,34 @@
+<form action="/project/fancyupload/2-0/showcase/photoqueue/script.php" method="post" enctype="multipart/form-data" id="form-demo">
+	<fieldset id="demo-fallback">
+		<legend>File Upload</legend>
+		<p>
+			Selected your photo to upload.<br />
+			<strong>This form is just an example fallback for the unobtrusive behaviour of FancyUpload.</strong>
+		</p>
+		<label for="demo-photoupload">
+			Upload Photos:
+			<input type="file" name="photoupload" id="demo-photoupload" />
+		</label>
+	</fieldset>
+
+	<div id="demo-status" class="hide">
+		<p>
+			<a href="#" id="demo-browse">Browse Files</a> |
+			<input type="checkbox" id="demo-select-images" /> Images Only |
+			<a href="#" id="demo-clear">Clear List</a> |
+			<a href="#" id="demo-upload">Upload</a>
+		</p>
+		<div>
+			<strong class="overall-title">Overall progress</strong><br />
+			<img src="../../assets/progress-bar/bar.gif" class="progress overall-progress" />
+		</div>
+		<div>
+			<strong class="current-title">File Progress</strong><br />
+			<img src="../../assets/progress-bar/bar.gif" class="progress current-progress" />
+		</div>
+		<div class="current-text"></div>
+	</div>
+
+	<ul id="demo-list"></ul>
+
+</form>

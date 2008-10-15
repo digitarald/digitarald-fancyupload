@@ -1,0 +1,79 @@
+#demo-status
+{
+	background-color:		#F9F7ED;
+	padding:				10px 15px;
+	width:					420px;
+}
+
+#demo-status .progress
+{
+	background:				white url(../../assets/progress-bar/progress.gif) no-repeat;
+	background-position:	+50% 0;
+	margin-right:			0.5em;
+}
+
+#demo-status .progress-text
+{
+	font-size:				0.9em;
+	font-weight:			bold;
+}
+
+#demo-list
+{
+	list-style:				none;
+	width:					450px;
+	margin:					0;
+}
+
+#demo-list li.file
+{
+	border-bottom:			1px solid #eee;
+	background:				url(../../assets/file.png) no-repeat 4px 4px;
+}
+#demo-list li.file.file-uploading
+{
+	background-image:		url(../../assets/uploading.png);
+	background-color:		#D9DDE9;
+}
+#demo-list li.file.file-success
+{
+	background-image:		url(../../assets/success.png);
+}
+#demo-list li.file.file-failed
+{
+	background-image:		url(../../assets/failed.png);
+}
+
+#demo-list li.file .file-name
+{
+	font-size:				1.2em;
+	margin-left:			44px;
+	display:				block;
+	clear:					left;
+	line-height:			40px;
+	height:					40px;
+	font-weight:			bold;
+}
+#demo-list li.file .file-size
+{
+	font-size:				0.9em;
+	line-height:			18px;
+	float:					right;
+	margin-top:				2px;
+	margin-right:			6px;
+}
+#demo-list li.file .file-info
+{
+	display:				block;
+	margin-left:			44px;
+	font-size:				0.9em;
+	line-height:			20px;
+	clear
+}
+#demo-list li.file .file-remove
+{
+	clear:					right;
+	float:					right;
+	line-height:			18px;
+	margin-right:			6px;
+}
