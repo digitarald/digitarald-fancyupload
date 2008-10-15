@@ -20,14 +20,16 @@ Features {#features}
   * Shows the current upload speed and the time left
   * Send additional request data via GET or POST variables
   * Set the filename for the upload request
+* New in 2.1
+	* **Works in Flash 10** by adding a clickable overlay
 
 
 Compatibility {#compatibility}
 -------------------
 
 Fully compatible with all [A-Grade Browsers][] ([Internet Explorer 6+](http://www.microsoft.com/windows/products/winfamily/ie/default.mspx),
-[Opera 9](http://www.opera.com/), [Firefox 1.5+](http://www.mozilla.com/en-US/firefox/) and [Safari 2+](http://www.apple.com/safari/))
-with [Adobe Flash 9](http://www.adobe.com/products/flashplayer/) player.
+[Opera 9](http://www.opera.com/), [Firefox 1.5+](http://www.mozilla.com/en-US/firefox/) and [Safari 3+](http://www.apple.com/safari/))
+with [Adobe Flash 9 and 10](http://www.adobe.com/products/flashplayer/) player.
 
 How to use {#how-to}
 -------------------
@@ -116,7 +118,8 @@ Download {#download}
 * [Swiff.Uploader.js](source/Swiff.Uploader.js)
 * [Fx.ProgressBar.js](source/Fx.ProgressBar.js "Will get his own project page later")
 * [Swiff.Uploader.swf](source/Swiff.Uploader.swf "It is a hidden, 1px movie and only contains ActionScript!") (*Use right-click/save-as!*)
-* For interested developers (*requires [Adobe Flash CS3](http://www.adobe.com/products/flash/)*) : [Swiff.Uploader.fla](source/Swiff.Uploader.fla)
+* Complete ActionScript/JavaScript source, documentation and showcases are available at [github](http://github.com/): [digitarald-fancyupload repository](https://github.com/digitarald/digitarald-fancyupload)
+	* The [images](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets) from the [showcases](/project/fancyupload/2-0/showcase/photoqueue/) are also [downloadable](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets).
 
 References {#references}
 -------------------
