@@ -1,7 +1,7 @@
 /**
  * FancyUpload - Flash meets Ajax for powerful and elegant uploads.
  *
- * @version		2.0.1
+ * @version		2.1
  *
  * @license		MIT License
  *

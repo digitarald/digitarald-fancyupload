@@ -1,10 +1,11 @@
 {
-	"title": "Queued Photo Uploader",
-	"description": "Creating a nice looking upload queue, including animated progress bars.",
+	"title": "Queued Photo Uploader (Fixed)",
+	"locked": true,
+	"description": "Showcase with FancyUpload preview version.",
 	"files": [
-		"mootools-trunk.js",
-		"../../source/Swiff.Uploader.js",
-		"../../source/Fx.ProgressBar.js",
-		"../../source/FancyUpload2.js"
+		"mootools-1.2-core-nc.js",
+		"../../source-fixed/Swiff.Uploader.js",
+		"../../source-fixed/Fx.ProgressBar.js",
+		"../../source-fixed/FancyUpload2.js"
 	]
 }

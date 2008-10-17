@@ -63,8 +63,10 @@ Swiff.Uploader = new Class({
 		this.box = new Element('div', {
 			styles: {
 				position: 'absolute',
+				visibility: 'visible',
+				zIndex: 9999,
 				overflow: 'hidden',
-				height: 10, width: 10,
+				height: 15, width: 15,
 				top: scroll.y, left: scroll.x
 			}
 		});

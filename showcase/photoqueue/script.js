@@ -1,16 +1,20 @@
 window.addEvent('load', function() {
 
+	// For testing, showing the user the current Flash version.
+	document.getElement('h3 + p').appendText(' Detected Flash ' + Browser.Plugins.Flash.version + '!');
+
 	var swiffy = new FancyUpload2($('demo-status'), $('demo-list'), {
-		debug: true, // using console.log
 		url: $('form-demo').action,
 		fieldName: 'photoupload',
-		path: '../../source/Swiff.Uploader.swf',
+		path: '../../source-fixed/Swiff.Uploader.swf',
 		limitSize: 2 * 1024 * 1024, // 2Mb
-		target: 'demo-browse',
 		onLoad: function() {
 			$('demo-status').removeClass('hide');
 			$('demo-fallback').destroy();
-		}
+		},
+		// The changed parts!
+		debug: true, // enable logs, uses console.log
+		target: 'demo-browse' // the element for the overlay (Flash 10 only)
 	});
 
 	/**
@@ -21,11 +25,16 @@ window.addEvent('load', function() {
 		/**
 		 * Doesn't work anymore with Flash 10: swiffy.browse();
 		 * FancyUpload moves the Flash movie as overlay over the link.
+		 * (see opeion "target" above)
 		 */
 		swiffy.browse();
 		return false;
 	});
 
+	/**
+	 * The *NEW* way to set the typeFilter, since Flash 10 does not call
+	 * swiffy.browse(), we need to change the type manually before the browse-click.
+	 */
 	$('demo-select-images').addEvent('change', function() {
 		var filter = null;
 		if (this.checked) {
