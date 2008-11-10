@@ -211,7 +211,7 @@
 		private function ioErrorHandler(event:IOErrorEvent):void {
 			var file:FileReference = FileReference(event.target);
 			if (finishFile(file)){
-				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'securityError', event.text, updateProgress());
+				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'ioError', event.text, updateProgress());
 				checkQueue();
 			}
 		}
@@ -219,7 +219,7 @@
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			var file:FileReference = FileReference(event.target);
 			if (finishFile(file)){
-				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'ioError', event.text, updateProgress());
+				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'securityError', event.text, updateProgress());
 				checkQueue();
 			}
 		}

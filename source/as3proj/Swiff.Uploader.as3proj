@@ -8,7 +8,7 @@
     <movie fps="30" />
     <movie width="800" />
     <movie height="800" />
-    <movie version="10" />
+    <movie version="9" />
     <movie background="#C0C0C0" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
@@ -24,9 +24,9 @@
     <option es="False" />
     <option loadConfig="" />
     <option optimize="False" />
-    <option showActionScriptWarnings="True" />
+    <option showActionScriptWarnings="False" />
     <option showBindingWarnings="True" />
-    <option showDeprecationWarnings="True" />
+    <option showDeprecationWarnings="False" />
     <option showUnusedTypeSelectorWarnings="True" />
     <option strict="True" />
     <option useNetwork="True" />
