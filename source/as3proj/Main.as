@@ -1,4 +1,4 @@
-﻿package com.digitarald.uploader
+﻿package
 {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -7,17 +7,19 @@
 	import flash.events.*;
 	import flash.utils.*;
 	import com.adobe.serialization.json.*;
-		
-	/*
-	 * From fancyupload imports:
-	 */ 
-	import flash.external.*;
-	import flash.net.FileReferenceList;
+	
+	import flash.system.Security;
+
 	import flash.net.FileReference;
+	import flash.net.FileReferenceList;
 	import flash.net.FileFilter;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
+	
+	import flash.external.ExternalInterface;
+	
+	import Escaper;
 	
 	/**
 	 * @licence		MIT Licence
@@ -27,10 +29,14 @@
 	 * @author		Valerio Proietti, <http://mad4milk.net>
 	 * @copyright	Authors
 	 */
-	public class Uploader extends Sprite 
+	public class Main extends Sprite
 	{
+		private function debug(mixed:*):void
+		{
+			ExternalInterface.call('console.info', Escaper.escape(mixed));
+		}
 		
-		public function Uploader():void 
+		public function Main():void 
 		{
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);
@@ -40,6 +46,14 @@
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			
+			if (!flash.net.FileReference || !flash.net.URLRequest || !flash.external.ExternalInterface || !flash.external.ExternalInterface.available) {
+				debug('Loading failed: Missing dependencies');
+				return;
+			}
+			debug('Loaded');
+			
+			// allow uploading to any domain
+			Security.allowDomain("*");
 			
 			// ExternalInterface callback adding copied:
 			ExternalInterface.addCallback('register', register);
@@ -55,6 +69,7 @@
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.addEventListener(MouseEvent.CLICK, stageClicked);
 			
+			// Movieclip needed for IE
 			var bg:MovieClip = new MovieClip();
 			bg.graphics.beginFill(0xFF0000, 0);
 			bg.graphics.drawRect(0, 0, 1024, 1024);
@@ -67,9 +82,10 @@
 			bg.useHandCursor = true;
 			addChild(bg);
 
-			ExternalInterface.call(root.loaderInfo.parameters.onLoad);
-			
+			var ret:String = ExternalInterface.call('onLoad'); // root.loaderInfo.parameters.onLoad
+			debug('onLoad-1: ' + ret);
 		}
+		
 		private function stageClicked(e:MouseEvent):void {
 			browse();
 		}
@@ -80,8 +96,7 @@
 		 * 
 		 */
 		
-		private var allowed:Boolean = true;
-		private var timer:Number = 0;
+		private var sleeping:Number = 0;
 		
 		private var multiple:Boolean = true;
 		private var queued:Boolean = true;
@@ -91,14 +106,13 @@
 		private var progress:Object = new Object();
 		
 		private var fileReference:Object = null;
-		private var uploading:Boolean = false;
+		private var uploading:Number = -1;
 
-		private function allow():void{
-			allowed = true;
-			timer = 0;
+		private function wake():void {
+			sleeping = 0;
 		}
 
-		private function register(index:String, multiple:Boolean, queued:Boolean):void{
+		private function register(multiple:Boolean, queued:Boolean):void {
 			this.multiple = (multiple == true);
 			this.queued = (this.multiple && queued == true);
 			this.progress = {
@@ -111,23 +125,27 @@
 		}
 
 		private function selectHandler(event:Event):void {
-			var ref:* = (multiple) ? FileReferenceList(event.target) : FileReference(event.target);
 			var added:Array = new Array();
 			if (multiple) {
-				for (var i:Number = 0; i < ref.fileList.length; i++){
-					var file:FileReference = ref.fileList[i];
-					if ((indexOfFile(file) === -1) && ExternalInterface.call(root.loaderInfo.parameters.onSelect, valueOfFile(file), i, ref.fileList.length) !== false){
-						addEvents(file);
-						added.push(file);
-					}
+				var refs:FileReferenceList = FileReferenceList(event.target);
+				for (var i:Number = 0; i < refs.fileList.length; i++){
+					var file:FileReference = refs.fileList[i];
+					if (indexOfFile(file) !== -1) continue;
+					var check:* = ExternalInterface.call(root.loaderInfo.parameters.onSelect, Escaper.escape(valueOfFile(file)), i, refs.fileList.length);
+					if (check === false) continue;
+					addEvents(file);
+					added.push(file);
 				}
-			} else if (ExternalInterface.call(root.loaderInfo.parameters.onSelect, valueOfFile(ref as FileReference)) !== false) {
-				if (fileList.length) {
-					removeFile();
+			} else {
+				var ref:FileReference = FileReference(event.target);
+				var check:* = ExternalInterface.call(root.loaderInfo.parameters.onSelect, valueOfFile(ref));
+				if (check !== false) {
+					if (fileList.length) removeFile();
+					added.push(ref);
 				}
-				added.push(ref);
+				
 			}
-			added = added.map(function(file:*):* {
+			added = added.map(function(file:FileReference):Object {
 				fileList.push(file);
 				fileProgress.push(false);
 				progress.bytesTotal += file.size;
@@ -135,7 +153,7 @@
 				return valueOfFile(file);
 			});
 			fileReference = null;
-			ExternalInterface.call(root.loaderInfo.parameters.onAllSelect, added, updateProgress());
+			ExternalInterface.call(root.loaderInfo.parameters.onAllSelect, Escaper.escape(added), Escaper.escape(updateProgress()));
 		}
 
 		private function updateProgress():Object {
@@ -162,12 +180,10 @@
 			var file:FileReference = FileReference(event.target);
 			var fileProgress:Object = this.fileProgress[this.fileList.indexOf(file)];
 			fileProgress.started = fileProgress.updated = (new Date()).getTime();
-			ExternalInterface.call(root.loaderInfo.parameters.onOpen, valueOfFile(file), this.progress);
+			ExternalInterface.call(root.loaderInfo.parameters.onOpen, Escaper.escape(valueOfFile(file)), Escaper.escape(this.progress));
 		}
 
 		private function progressHandler(event:ProgressEvent):void {
-			if (!allowed) return;
-			allowed = false;
 			var file:FileReference = FileReference(event.target);
 
 			var fileProgress:Object = this.fileProgress[this.fileList.indexOf(file)];
@@ -187,23 +203,23 @@
 			}
 			fileProgress.updated = time;
 
-			updateProgress();
-
-			ExternalInterface.call(root.loaderInfo.parameters.onProgress, valueOfFile(file), fileProgress, updateProgress());
-			if (!timer) timer = setTimeout(allow, 200);
+			if (sleeping) return;
+			sleeping = setTimeout(wake, 100);
+			
+			ExternalInterface.call(root.loaderInfo.parameters.onProgress, Escaper.escape(valueOfFile(file)), Escaper.escape(fileProgress), Escaper.escape(updateProgress()));
 		}
 
 		private function completeHandler(event:DataEvent):void {
 			var file:FileReference = FileReference(event.target);
 			finishFile(file);
-			ExternalInterface.call(root.loaderInfo.parameters.onComplete, valueOfFile(file), event.data, updateProgress());
+			ExternalInterface.call(root.loaderInfo.parameters.onComplete, Escaper.escape(valueOfFile(file)), Escaper.escape(event.data), Escaper.escape(updateProgress()));
 			checkQueue();
 		}
 
 		private function httpStatusHandler(event:HTTPStatusEvent):void {
 			var file:FileReference = FileReference(event.target);
 			if (finishFile(file)){
-				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'httpStatus', event.status, updateProgress());
+				ExternalInterface.call(root.loaderInfo.parameters.onError, Escaper.escape(valueOfFile(file)), 'httpStatus', event.status, Escaper.escape(updateProgress()));
 				checkQueue();
 			}
 		}
@@ -211,7 +227,7 @@
 		private function ioErrorHandler(event:IOErrorEvent):void {
 			var file:FileReference = FileReference(event.target);
 			if (finishFile(file)){
-				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'ioError', event.text, updateProgress());
+				ExternalInterface.call(root.loaderInfo.parameters.onError, Escaper.escape(valueOfFile(file)), 'ioError', event.text, Escaper.escape(updateProgress()));
 				checkQueue();
 			}
 		}
@@ -219,7 +235,7 @@
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
 			var file:FileReference = FileReference(event.target);
 			if (finishFile(file)){
-				ExternalInterface.call(root.loaderInfo.parameters.onError, valueOfFile(file), 'securityError', event.text, updateProgress());
+				ExternalInterface.call(root.loaderInfo.parameters.onError, Escaper.escape(valueOfFile(file)), 'securityError', event.text, Escaper.escape(updateProgress()));
 				checkQueue();
 			}
 		}
@@ -228,7 +244,7 @@
 			if (this.queued && this.fileList.length){
 				upload();
 			} else {
-				if (this.multiple) ExternalInterface.call(root.loaderInfo.parameters.onAllComplete, updateProgress());
+				if (this.multiple) ExternalInterface.call(root.loaderInfo.parameters.onAllComplete, Escaper.escape(updateProgress()));
 				this.progress.bytesTotal = this.progress.filesTotal = this.progress.bytesFinished = this.progress.filesFinished = 0;
 			}
 		}
@@ -249,13 +265,19 @@
 		private function browse():Object {
 			if (this.fileReference) return false;
 			
-			var typeFilter:Object = ExternalInterface.call(root.loaderInfo.parameters.onBrowse);
+			var typeFilter:* = ExternalInterface.call(root.loaderInfo.parameters.onBrowse);
+			debug('typeFilter: ' + (typeFilter !== null));
+			
 			var filter:Array = new Array();
-			if (typeFilter){
+			if (typeFilter is Object){
 				for (var key:String in typeFilter){
 					var type:FileFilter = new FileFilter(key, typeFilter[key]);
+					debug('... ' + key + ': ' + typeFilter[key]);
 					filter.push(type);
 				}
+			} else if (typeFilter is String) {
+				var type:FileFilter = new FileFilter(typeFilter, typeFilter);
+				filter.push(type);
 			}
 			
 			this.fileReference = (this.multiple) ? new FileReferenceList() : new FileReference();
@@ -271,11 +293,11 @@
 		};
 
 		private function upload(options:Object = null):Object {
-			if (this.uploading || !this.fileList.length) {
+			if (this.uploading != -1 || !this.fileList.length) {
 				return false;
 			}
 			if (options) this.options = options;
-			this.uploading = true;
+			this.uploading = 0;
 			try {
 				if (this.queued){
 					uploadFile(this.fileList[0]);
@@ -292,44 +314,49 @@
 
 		private function getFileList():Array {
 			return this.fileList.map(function(file:FileReference):Object {
-				return valueOfFile(file);
+				return Escaper.escape(valueOfFile(file));
 			});
 		};
 
-		private function removeFile(file:Object = null, finished:Boolean = false):Boolean {
-			if (file){
+		private function removeFile(file:Object = null, finished:Boolean = false):* {
+			if (file) {
 				var num:Number = indexOfFile(file);
 				if (num == -1) return false;
 				this.fileList[num].cancel();
 				this.fileList.splice(num, 1);
 				this.fileProgress.splice(num, 1);
-				if (finished){
+				if (finished) {
 					this.progress.bytesFinished += file.size;
 					this.progress.filesFinished++;
 				} else {
 					this.progress.bytesTotal -= file.size;
 					this.progress.filesTotal--;
+					if (num == this.uploading && this.queued) {
+						this.uploading = -1;
+						checkQueue();
+					}
 				}
 			} else {
 				if (!this.fileList.length) return false;
 				for (var i:int = 0; i < this.fileList.length; i++) this.fileList[i].cancel();
 				this.fileList.length = this.fileProgress.length = 0;
-				if (finished){
+				if (finished) {
 					this.progress.bytesFinished = this.progress.bytesTotal;
 					this.progress.filesFinished = this.progress.filesTotal;
 				} else {
 					this.progress.bytesTotal = this.progress.filesTotal = this.progress.bytesFinished = this.progress.filesFinished = 0;
 				}
+				checkQueue();
 			}
-			if (!this.fileList.length) this.uploading = false;
-			return true;
+			if (!this.fileList.length) this.uploading = -1;
+			return Escaper.escape(this.progress);
 		};
 
 		// Helper
 
 		private function indexOfFile(file:Object):Number {
 			var list:Array = this.fileList;
-			for (var i:Number = 0; i < list.length; i++){
+			for (var i:Number = 0; i < list.length; i++) {
 				if ((list[i].name == file.name) && (list[i].size == file.size)) return i;
 			}
 			return -1;
@@ -347,12 +374,14 @@
 
 		private function uploadFile(file:FileReference):void {
 			var optionsDefault:Object = (this.options) ? this.options : new Object();
-			var optionsOverride:Object = ExternalInterface.call(root.loaderInfo.parameters.onBeforeOpen, valueOfFile(file), optionsDefault);
+			var optionsOverride:Object = ExternalInterface.call(root.loaderInfo.parameters.onBeforeOpen, Escaper.escape(valueOfFile(file)), Escaper.escape(optionsDefault));
+			debug('optionsOverride');
+			debug(optionsOverride);
 			var options:Object = (optionsOverride) ? optionsOverride : optionsDefault;
 
 			options.fieldName = (options.fieldName) ? options.fieldName : 'Filedata';
 			var urlRequest:URLRequest = new URLRequest((options.hasOwnProperty('url')) ? options.url : '');
-			if (options.hasOwnProperty('data')){
+			if (options.hasOwnProperty('data')) {
 				var data:URLVariables = new URLVariables();
 				if (options.data is String) data.decode(options.data);
 				else for (var key:Object in options.data) data[key] = options.data[key];
@@ -364,16 +393,9 @@
 		}
 
 		private function finishFile(file:FileReference):Boolean {
-			var removeFiled:Boolean = removeFile(file, true);
-			if (removeFiled) this.uploading = false;
-			return removeFiled;
-		};
-		 
-		 
-		 /*
-		  * Above here:
-		  * Copied from fancyupload
-		  * 
-		  */	
+			var removed:Boolean = removeFile(file, true);
+			if (removed) this.uploading = -1;
+			return removed;
+		}
 	}
 }

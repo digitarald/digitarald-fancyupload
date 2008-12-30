@@ -78,12 +78,13 @@ var FancyUpload2 = new Class({
 		file = this.getFile(file);
 		file.element.addClass('file-uploading');
 		this.currentProgress.cancel().set(0);
-		this.currentTitle.set('html', 'File Progress "{name}"'.substitute(file) );
+		this.currentTitle.set('html', FancyUpload2.lang.get('progress.file.start').substitute(file));
 	},
 
 	onProgress: function(file, current, overall) {
 		this.overallProgress.start(overall.bytesLoaded, overall.bytesTotal);
-		this.currentText.set('html', 'Upload with {rate}/s. Time left: ~{timeLeft}'.substitute({
+		this.currentText.set('html', FancyUpload2.lang.get('progress.file').substitute({
+			file: file,
 			rate: (current.rate) ? this.sizeToKB(current.rate) : '- B',
 			timeLeft: Date.fancyDuration(current.timeLeft || 0)
 		}));
@@ -98,10 +99,11 @@ var FancyUpload2 = new Class({
 		if (!this.options.validateFile.call(this, file, errors)) errors.push('custom');
 		if (errors.length) {
 			var fn = this.options.fileInvalid;
+			this.log(errors);
 			if (fn) fn.call(this, file, errors);
 			return false;
 		}
-		(this.options.fileCreate || this.fileCreate).call(this, file);
+		(this.options.fileCreate || this.fileCreate).delay(10, this, file);
 		this.files.push(file);
 		return true;
 	},
@@ -195,7 +197,9 @@ var FancyUpload2 = new Class({
 
 	updateOverall: function(bytesTotal) {
 		this.bytesTotal = bytesTotal;
-		this.overallTitle.set('html', 'Overall Progress (' + this.sizeToKB(bytesTotal) + ')');
+		this.overallTitle.set('html', FancyUpload2.lang.get('progress.overall').substitute({
+			total: this.sizeToKB(bytesTotal)
+		}));
 	},
 
 	finishFile: function(file) {
@@ -212,7 +216,7 @@ var FancyUpload2 = new Class({
 			new Element('a', {
 				'class': 'file-remove',
 				'href': '#',
-				'html': 'Remove',
+				'html': FancyUpload2.lang.get('file.remove').substitute(file),
 				'events': {
 					'click': function() {
 						this.removeFile(file);
@@ -220,8 +224,7 @@ var FancyUpload2 = new Class({
 					}.bind(this)
 				}
 			}),
-			new Element('span', {'class': 'file-name', 'html': file.name}),
-			file.info
+			new Element('span', {'class': 'file-name', 'html': FancyUpload2.lang.get('file.name').substitute(file)})
 		).inject(this.list);
 	},
 
@@ -239,7 +242,9 @@ var FancyUpload2 = new Class({
 
 	fileError: function(file, error, info) {
 		file.element.addClass('file-failed');
-		file.info.set('html', '<strong>' + error + '</strong><br />' + info);
+		file.info.set('html', FancyUpload2.lang.get('file.error').substitute({
+			file: file, error: error,  info: info
+		}));
 	},
 
 	fileRemove: function(file) {
@@ -263,6 +268,15 @@ var FancyUpload2 = new Class({
 	}
 
 });
+
+FancyUpload2.lang = new Hash({
+	'progress.overall': 'Overall Progress ({total})',
+	'progress.file': 'File Progress "{name}"',
+	'file.name': '{name}',
+	'file.remove': 'Remove',
+	'file.error': '<strong>{error}</strong><br />{info}'
+});
+
 
 /**
  * @todo Clean-up, into Date.js

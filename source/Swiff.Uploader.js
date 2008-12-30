@@ -17,6 +17,7 @@ Swiff.Uploader = new Class({
 
 	options: {
 		path: 'Swiff.Uploader.swf',
+		id: 'SwiffUploader',
 		multiple: true,
 		queued: true,
 		typeFilter: null,
@@ -27,7 +28,12 @@ Swiff.Uploader = new Class({
 		target: null,
 		height: '100%',
 		width: '100%',
-		callBacks: null
+		callBacks: null,
+		params: {
+			wMode: 'window',
+			menu: 'false',
+			allowScriptAccess: 'always'
+		}
 	},
 
 	initialize: function(options){
@@ -55,7 +61,7 @@ Swiff.Uploader = new Class({
 		this.options.callBacks = prepare;
 
 		var path = this.options.path;
-		if (!path.contains('?')) path += '?noCache=' + $time(); // quick fix
+		// if (!path.contains('?')) path += '?noCache=' + $time(); // quick fix
 
 		this.parent(path);
 
@@ -77,7 +83,7 @@ Swiff.Uploader = new Class({
 	},
 
 	load: function(){
-		this.remote('register', this.instance, this.options.multiple, this.options.queued);
+		this.remote('register', this.options.multiple, this.options.queued);
 		this.fireEvent('onLoad');
 
 		this.target = $(this.options.target);
@@ -85,6 +91,7 @@ Swiff.Uploader = new Class({
 			this.reposition();
 			window.addEvent('resize', this.reposition.bind(this));
 		}
+		return true;
 	},
 
 	reposition: function() {
@@ -98,6 +105,9 @@ Swiff.Uploader = new Class({
 	*/
 
 	browse: function(typeFilter){
+		if (Browser.Plugins.Flash.version >= 10) {
+			throw new Error('Swiff.Uploader::browse: Do not call `browse` manually with Flash >= 10, provide your clickable element as option `target`.');
+		}
 		this.options.typeFilter = $pick(typeFilter, this.options.typeFilter);
 		return this.remote('browse');
 	},

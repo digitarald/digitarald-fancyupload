@@ -1,4 +1,4 @@
-window.addEvent('load', function() {
+window.addEvent('domready', function() {
 
 	// For testing, showing the user the current Flash version.
 	document.getElement('h3 + p').appendText(' Detected Flash ' + Browser.Plugins.Flash.version + '!');
@@ -6,12 +6,15 @@ window.addEvent('load', function() {
 	var swiffy = new FancyUpload2($('demo-status'), $('demo-list'), {
 		url: $('form-demo').action,
 		fieldName: 'photoupload',
-		path: '../../source-fixed/Swiff.Uploader.swf',
+		path: 'Swiff.Uploader.swf',
 		limitSize: 2 * 1024 * 1024, // 2Mb
 		onLoad: function() {
 			$('demo-status').removeClass('hide');
 			$('demo-fallback').destroy();
 		},
+		//fileInvalid: function(file, errors) {
+		//	alert(errors.join(' '));
+		//},
 		// The changed parts!
 		debug: true, // enable logs, uses console.log
 		target: 'demo-browse' // the element for the overlay (Flash 10 only)
@@ -54,3 +57,8 @@ window.addEvent('load', function() {
 	});
 
 });
+
+function onLoad() {
+console.log('Called', arguments);
+	return 'true';
+}

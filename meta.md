@@ -48,7 +48,7 @@ How do I access the uploaded files?
 	- Rails: params[:Filedata] ... [example](http://forum.mootools.net/viewtopic.php?id=2726&p=6#post-22330)
 	- ASP: [Fancy Upload and Classic ASP](http://bennewton.us/2007/07/22/fancy-upload-and-classic-asp/)
 	
-	*Filedata* is the default value for the option fieldName, so you can change it. The submitted content-type is always "application/octet-stream", so don't trust it when you validate the file.
+	*Filedata* is the default value for the option `fieldName`, so you can change it. The submitted `content-type` header is always `application/octet-stream`, so don't trust it when you validate the file.
 
 Flash-request forgets cookies and session ID
 
@@ -56,7 +56,7 @@ Flash-request forgets cookies and session ID
 
 Are cross-domain uploads possible?
 
-:	[Forum solution](http://forum.mootools.net/viewtopic.php?id=8312), and FileReference docs:
+:	*Fixed in the new version.* [Forum solution](http://forum.mootools.net/viewtopic.php?id=8312), and FileReference docs:
 
 	> For uploading and downloading operations, a SWF file can access files only within its own domain, including any domains that are specified by a cross-domain policy file. If the SWF that is initiating the upload or download doesn't come from the same domain as the file server, you must put a policy file on the file server.
 	[More on security and link to cross-domain policies](http://livedocs.adobe.com/flash/8/main/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&file=00001590.html)
@@ -73,7 +73,7 @@ Uploads fail with 404 error code
 
 Uploads fail with 406/403 error
 
-:	From the swfupload documentation:
+:	From the swfupload documentation (it applies to all Flash scripts depending on `FileReference`):
 	
 	> If you are using Apache with mod_security this will not work, you need to put the following in your .htaccess file to disable mod_security:
 	> 
