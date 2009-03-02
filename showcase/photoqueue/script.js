@@ -1,12 +1,12 @@
 window.addEvent('domready', function() {
 
 	// For testing, showing the user the current Flash version.
-	document.getElement('h3 + p').appendText(' Detected Flash ' + Browser.Plugins.Flash.version + '!');
+	document.getElement('#demo-status p').appendText(' | Flash ' + Browser.Plugins.Flash.version + '!');
 
 	var swiffy = new FancyUpload2($('demo-status'), $('demo-list'), {
 		url: $('form-demo').action,
 		fieldName: 'photoupload',
-		path: 'Swiff.Uploader.swf',
+		path: '../../source/Swiff.Uploader.swf',
 		limitSize: 2 * 1024 * 1024, // 2Mb
 		onLoad: function() {
 			$('demo-status').removeClass('hide');
