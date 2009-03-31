@@ -33,6 +33,8 @@
     <option useResourceBundleMetadata="True" />
     <option warnings="True" />
     <option verboseStackTraces="False" />
+    <option linkReport="" />
+    <option loadExterns="" />
     <option additional="" />
     <option customSDK="" />
   </build>
