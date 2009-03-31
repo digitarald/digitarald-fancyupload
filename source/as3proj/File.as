@@ -350,29 +350,29 @@ package
 		
 		public function requeue():Boolean
 		{
-			if (status == File.STATUS_RUNNING) stop(false);
+			var running:Boolean = stop(false);
 			
 			status = File.STATUS_QUEUED;
 			
 			fireEvent('requeue');
 			
-			parent.checkQueue(true);
+			if (running) parent.checkQueue(true);
 			
 			return true;
 		}
 		
 		public function remove():void
 		{
+			var running:Boolean = stop(false);
+			
 			var idx = parent.fileList.indexOf(this);
 			parent.fileList.splice(idx, 1);
 
-			parent.size -= reference.size;
-			
-			stop(false);
-						
+			parent.size-= reference.size;
+				
 			fireEvent('remove', true);
 			
-			parent.checkQueue(true);
+			if (running) parent.checkQueue(true);
 						
 			reference = null;
 		}

@@ -53,7 +53,7 @@ Fx.ProgressBar = new Class({
 			? (((this.fill / -2) + (to / 100) * (this.element.width || 1) || 0).round() + 'px')
 			: ((100 - to) + '%');
 		
-		this.element.setStyle('backgroundPosition', css + ' 0px');
+		this.element.setStyle('backgroundPosition', css + ' 0px').title = Math.round(to) + '%';
 		if (this.text) this.text.set('text', Math.round(to) + '%');
 		
 		return this;

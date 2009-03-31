@@ -130,9 +130,9 @@ window.addEvent('domready', function() {
 		url: '/3-0/showcase/all-inclusive/script.php',
 		verbose: true,
 		queued: false,
-		instantStart: true,
 		target: $('select-0'),
 		// buttonText: 'Select A File',
+		instantStart: true,
 		fileClass: File,
 		fileSizeMax: 25 * 1024 * 1024,
 		onBrowse: function() {},
@@ -144,6 +144,7 @@ window.addEvent('domready', function() {
 				this.target = selectMore;
 				this.reposition();
 			}
+			if (added.length && Browser.Platform.linux) window.alert('Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nSince you are prepared now, the upload will start right away ...');
 		},
 		onComplete: function(file, data) {
 			select.setStyle('display', 'inline');
