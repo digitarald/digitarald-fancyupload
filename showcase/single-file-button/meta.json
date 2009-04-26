@@ -1,0 +1,8 @@
+{
+	"title": "Simple Button",
+	"files": [
+		"/assets/mootools-1.2.1-core-nc.js",
+		"../../source/Fx.ProgressBar.js",
+		"../../source/Swiff.Uploader.js"
+	]
+}

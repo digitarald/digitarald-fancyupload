@@ -27,81 +27,78 @@ window.addEvent('domready', function() {
 		render: function() {
 			// More validation here
 
-			this.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
+			this.ui = {};
+			
+			this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
 
-			this.title = new Element('span', {'class': 'file-title', href: '#file-' + this.id, text: this.data.file.name});
+			this.ui.title = new Element('span', {'class': 'file-title', href: '#file-' + this.id, text: this.name});
 
-			this.status = new Element('span', {'class': 'file-status', title: 'Status', html: 'Status'});
-			this.progress = new Element('div', {'class': 'file-progress', title: 'Progress', html: 'Progress'});
+			this.ui.status = new Element('span', {'class': 'file-status', title: 'Status', html: 'Status'});
+			this.ui.progress = new Element('div', {'class': 'file-progress', title: 'Progress', html: 'Progress'});
 
-			this.links = new Element('span', {'class': 'file-links'});
+			this.ui.links = new Element('span', {'class': 'file-links'});
 
 			if (this.invalid) {
-				this.element.addClass('file-invalid');
-				this.status.set('html', 'Invalid file: ' + this.data.validationError || this.validationError || 'Unknown error');
+				this.ui.element.addClass('file-invalid');
+				this.ui.status.set('html', 'Invalid file: ' + this.validationError || 'Unknown error');
 
-				this.title.addEvent('click', this.remove.bind(this));
+				this.ui.title.addEvent('click', this.remove.bind(this));
 			} else {
-				new Element('a', {html: 'Start', href: '#'}).addEvent('click', this.start.bind(this)).inject(this.links);
-				new Element('a', {html: 'Stop', href: '#'}).addEvent('click', this.stop.bind(this)).inject(this.links);
-				new Element('a', {html: 'Remove', href: '#'}).addEvent('click', this.remove.bind(this)).inject(this.links);
-				new Element('a', {html: 'Requeue', href: '#'}).addEvent('click', this.requeue.bind(this)).inject(this.links);
-
-				this.element
+				new Element('a', {html: 'Start', href: '#'}).addEvent('click', this.start.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Stop', href: '#'}).addEvent('click', this.stop.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Remove', href: '#'}).addEvent('click', this.remove.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Requeue', href: '#'}).addEvent('click', this.requeue.bind(this)).inject(this.ui.links);
 			}
 
-			this.element.adopt(
-				this.links,
-				this.title,
-				this.status,
-				this.progress
+			this.ui.element.adopt(
+				this.ui.links,
+				this.ui.title,
+				this.ui.status,
+				this.ui.progress
 			).inject((this.invalid) ? listFail : list).highlight((this.invalid) ? '#f00' : null);
 
 			return this.parent();
 		},
 
 		toggle: function() {
-			if (this.data.status == Swiff.Uploader.File.STATUS_RUNNING) this.stop();
+			if (this.status == Swiff.Uploader.File.STATUS_RUNNING) this.stop();
 			else this.requeue();
 			return false;
 		},
 
 		onOpen: function() {
-			this.element.addClass('file-running');
-			this.status.set('html', 'Starting');
-		},
-
-		onRemove: function() {
-			this.element.destroy();
+			this.ui.element.addClass('file-running');
+			this.ui.status.set('html', 'Starting');
 		},
 
 		onRequeue: function() {
-			this.status.set('html', 'Pending');
+			this.ui.status.set('html', 'Pending');
 		},
 
 		onProgress: function() {
-			var progress = Swiff.Uploader.formatUnit(this.data.progress.rateAvg, 'bps')
-				+ ' - ' + Swiff.Uploader.formatUnit(this.data.progress.bytesLoaded, 'b')
-				+ ' of ' + Swiff.Uploader.formatUnit(this.data.file.size, 'b');
-			var status = Swiff.Uploader.formatUnit(this.data.progress.timeRemaining, 's') + ' left';
+			var progress = Swiff.Uploader.formatUnit(this.progress.rateAvg, 'bps')
+				+ ' - ' + Swiff.Uploader.formatUnit(this.progress.bytesLoaded, 'b')
+				+ ' of ' + Swiff.Uploader.formatUnit(this.size, 'b');
+			var status = Swiff.Uploader.formatUnit(this.progress.timeRemaining, 's') + ' left';
 
-			this.progress.set('html', progress);
-			this.status.set('html', status);
+			this.ui.progress.set('html', progress);
+			this.ui.status.set('html', status);
 		},
 
 		onStop: function() {
-			this.element.removeClass('file-running');
-
-			this.progress.set('html', '');
-			this.status.set('html', 'Stopped');
+			this.ui.element.removeClass('file-running');
+			this.ui.progress.set('html', '');
+			this.ui.status.set('html', 'Stopped');
 		},
 
 		onComplete: function() {
 			this.onStop();
+			this.ui.element.addClass('file-complete');
+			this.ui.status.set('text', this.response.text);
+		},
 
-			this.element.addClass('file-complete');
-
-			this.status.set('text', this.data.response.text);
+		onRemove: function() {
+			this.ui = this.ui.element.destroy();
 		}
 
 	});
@@ -165,7 +162,7 @@ window.addEvent('domready', function() {
 	});
 
 	$('option-queued').addEvent('change', function() {
-		swf.setOptions({queued: (this.queued > 0) ? this.value : false});
+		swf.setOptions({queued: (this.value > 0) ? this.value : false});
 		this.getParent().highlight();
 	});
 
@@ -212,24 +209,13 @@ window.addEvent('domready', function() {
 			});
 		},
 		onBrowse: function() {
-			if (this.unloaded) window.cancel();
 			var styles = document.getCoordinates();
 			styles.lineHeight = styles.height;
 			styles.visibility = 'hidden';
 
-			/*
-			this.overlay = new Element('div', {
-				id: 'overlay-select',
-				styles: styles,
-				html: 'Selecting Files for Upload ...'
-			}).inject(document.body).fade(0, 0.7);
-			this.overlay = this.overlay.destroy();
-			*/
 		},
-		onCancel: function() {
-			
-		},
-		onSelect: function() {
+		onCancel: function() {},
+		onSelectSuccess: function() {
 			if (dummy) {
 				dummy = dummy.destroy();
 				$('button-start-0').removeClass('button-start-disabled');
@@ -238,9 +224,19 @@ window.addEvent('domready', function() {
 		onQueue: updateQueue
 	});
 
+	/*
+	this.overlay = new Element('div', {
+		id: 'overlay-select',
+		styles: styles,
+		html: 'Selecting Files for Upload ...'
+	}).inject(document.body).fade(0, 0.7);
+	this.overlay = this.overlay.destroy();
+	*/
 
 	$('button-start-0').addEvent('click', function(){
-		if (swf.loaded) swf.start();
+		if (swf.loaded && (!Browser.Platform.linux || window.confirm('Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nSince you are prepared now, the upload will start right away ...'))) {
+			swf.start();
+		}
 		return false;
 	});
 

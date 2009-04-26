@@ -229,18 +229,15 @@ package
 		
 		private function complete(text:String = null, error:String = null, code:int = 0)
 		{
-			parent.verboseLog('File[' + id + ']::complete', [].concat(arguments));
-				
-			if (status != File.STATUS_RUNNING) return;
+			if (status != File.STATUS_RUNNING) {
+				parent.verboseLog('File[' + id + ']::complete wasted!', [].concat(arguments));
+				return;
+			}
 						
 			completeDate = new Date();
 			
-			if (!code) {
-				responseCode = code;
-			}
-			if (text != null) {
-				responseText = text;
-			}
+			responseText = text;
+			responseCode = code;
 			
 			if (error) {
 				responseError = error;
@@ -248,6 +245,7 @@ package
 			} else {
 				status = File.STATUS_COMPLETE;
 			}
+			
 			parent.uploading--;
 			
 			updateProgress(reference.size, true);
@@ -361,24 +359,31 @@ package
 			return true;
 		}
 		
-		public function remove():void
+		public function remove():Boolean
 		{
 			var running:Boolean = stop(false);
 			
 			var idx = parent.fileList.indexOf(this);
 			parent.fileList.splice(idx, 1);
 
-			parent.size-= reference.size;
+			parent.size -= reference.size;
 				
 			fireEvent('remove', true);
 			
 			if (running) parent.checkQueue(true);
-						
+			
 			reference = null;
+			
+			return true;
 		}
 		
 		public function validate():Boolean
 		{
+			if (!parent.options.allowDuplicates && parent.hasFile(this)) {
+				validationError = 'duplicate';
+				return false;
+			}
+
 			if (parent.options.fileSizeMin > 0 && reference.size < parent.options.fileSizeMin) {
 				validationError = 'sizeLimitMin';
 				return false;
@@ -389,11 +394,6 @@ package
 				return false;
 			}
 			
-			if (!parent.options.allowDuplicates && parent.hasFile(this)) {
-				validationError = 'duplicate';
-				return false;
-			}
-			
 			return true;
 		}
 		
@@ -401,25 +401,20 @@ package
 		{
 			var export:Object = {
 				id: id,
+				name: reference.name,
+				size: reference.size,
+				modificationDate: reference.modificationDate,
+				creationDate: reference.creationDate,
+				extension: fileExtension,
 				status: status,
 				validationError: validationError,
-				dates: {
-					add: addDate,
-					start: startDate,
-					progress: progressDate,
-					complete: completeDate
-				},
-				file: {
-					name: reference.name,
-					size: reference.size,
-					extension: fileExtension,
-					modificationDate: reference.modificationDate,
-					creationDate: reference.creationDate
-				},
-				options: options
+				addDate: addDate
 			};
 			
 			if (startDate) {
+				export.startDate = startDate;
+				export.progressDate = progressDate;
+				
 				export.progress = {
 					graph: progressGraph,
 					bytesLoaded: bytesLoaded,
@@ -432,6 +427,8 @@ package
 			};
 			
 			if (completeDate) {
+				export.completeDate = completeDate;
+				
 				export.response = {
 					text: responseText,
 					code: responseCode,

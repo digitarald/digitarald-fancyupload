@@ -19,7 +19,7 @@ package
 	import flash.display.MovieClip;
 	
 	import flash.display.Loader;
-		
+	
 	import flash.events.*;
 	import flash.utils.*;
 	
@@ -71,10 +71,6 @@ package
 			fileSizeMax: null,// Official 100 MB limit for FileReference
 			allowDuplicates: false,
 
-			buttonText: null,
-			buttonTextStyle: null,
-			buttonTextPaddingTop: 0,
-			buttonTextPaddingLeft: 0,
 			buttonImage: null
 		};
 		
@@ -88,7 +84,6 @@ package
 		private var dialog:*= null;
 		
 		private var buttonLoader:Loader;
-		private var buttonTextField:TextField;
 		private var buttonCursorSprite:Sprite;
 		
 		private var buttonState:uint = 0;
@@ -174,22 +169,6 @@ package
 			stage.addChild(buttonLoader);
 			
 			
-			buttonTextField = new TextField();
-			buttonTextField.type = TextFieldType.DYNAMIC;
-			buttonTextField.antiAliasType = AntiAliasType.ADVANCED;
-			buttonTextField.autoSize = TextFieldAutoSize.NONE;
-			buttonTextField.cacheAsBitmap = true;
-			buttonTextField.multiline = true;
-			buttonTextField.wordWrap = false;
-			buttonTextField.tabEnabled = false;
-			buttonTextField.background = false;
-			buttonTextField.border = false;
-			buttonTextField.selectable = false;
-			buttonTextField.condenseWhite = true;
-			
-			stage.addChild(buttonTextField);
-			
-			
 			buttonCursorSprite = new Sprite();
 			buttonCursorSprite.graphics.beginFill(0xFFFFFF, 0);
 			buttonCursorSprite.graphics.drawRect(0, 0, 1, 1);
@@ -204,7 +183,7 @@ package
 			
 			initButton();
 			
-			verboseLog('initialized', options);
+			verboseLog('initialized');
 		}
 		
 		private function xSetOptions(options_override:Object = null):void
@@ -256,7 +235,7 @@ package
 				uploading: uploading,
 				size: size,
 				bytesLoaded: bytesLoaded,
-				percentLoaded: Math.ceil(bytesLoaded / size * 100),
+				percentLoaded: (size > 0) ? Math.ceil(bytesLoaded / size * 100) : 0,
 				rate: rate
 			};
 		}
@@ -303,24 +282,25 @@ package
 		{
 			var queued:uint = (options.queued) ? ((options.queued > 1) ? options.queued : 1) : 0;
 			
-			if (uploading && queued && queued >= uploading) return;
+			if (uploading && queued && uploading >= queued) return;
 			
 			var length:uint = fileList.length;
-			var started:uint = 0;
 			
 			for (var i:uint = 0; i < length; i++) {
 				if (fileList[i].status != File.STATUS_QUEUED) continue;
 				fileList[i].start();
-				started++;
-				if (queued && queued >= uploading) return;
+				if (queued && uploading >= queued) return;
 			}
 			
-			if (!started && eventful) fireEvent('complete', [queueUpdate()]);
+			if (!uploading && eventful) fireEvent('complete', [queueUpdate()]);
 		}
 		
 		private function stageClick(e:MouseEvent):void
 		{
-			if (buttonState & BUTTON_STATE_DISABLED) return;
+			if (buttonState & BUTTON_STATE_DISABLED) {
+				fireEvent('disabledBrowse');
+				return;
+			}
 			
 			browse();
 		}
@@ -359,8 +339,6 @@ package
 		
 		private function updateSize():void
 		{
-			buttonTextField.width = stage.stageWidth;
-			buttonTextField.height = stage.stageHeight;
 			buttonCursorSprite.width = stage.stageWidth;
 			buttonCursorSprite.height = stage.stageHeight;
 		}
@@ -375,15 +353,6 @@ package
 			
 			updateSize();
 			
-			var style:StyleSheet = new StyleSheet();
-			if (options.buttonTextStyle) style.parseCSS(options.buttonTextStyle);
-			buttonTextField.styleSheet = style;
-			
-			buttonTextField.htmlText = options.buttonText || '';
-			
-			buttonTextField.x = options.buttonTextPaddingLeft || 0;
-			buttonTextField.y = options.buttonTextPaddingTop || 0;
-
 			updateButton();
 		}
 		
@@ -423,14 +392,14 @@ package
 				}
 			}
 			
-			// fireEvent('browse', options.typeFilter);
+			fireEvent('browse');
 			
 			dialog = (options.multiple) ? new FileReferenceList() : new FileReference();
 			dialog.addEventListener(Event.SELECT, handleSelect);
 			dialog.addEventListener(Event.CANCEL, handleCancel);
 			
 			try {
-				var success:Boolean = dialog.browse((filter.length) ? filter : null);
+				dialog.browse((filter.length) ? filter : null);
 			} catch (e:Error) {
 				verboseLog('Main::browse Exception', e.toString());
 			}

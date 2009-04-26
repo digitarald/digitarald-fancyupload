@@ -26,26 +26,17 @@ window.addEvent('domready', function() {
 
 		initialize: function(uploader, data) {
 			this.parent(uploader, data);
-
-			this.addEvents({
-				'open': this.onOpen,
-				'remove': this.onRemove,
-				'requeue': this.onRequeue,
-				'progress': this.onProgress,
-				'stop': this.onStop,
-				'complete': this.onComplete
-			});
 		},
 
 		render: function() {
-			// More validation here
+			
 			if (this.invalid) {
-				var message, sub = {
-					name: this.data.file.name,
-					size: Swiff.Uploader.formatUnit(this.data.file.size, 'b')
+				var message = 'Unknown Error', sub = {
+					name: this.name,
+					size: Swiff.Uploader.formatUnit(this.size, 'b')
 				};
 				
-				switch (this.data.validationError) {
+				switch (this.validationError) {
 					case 'duplicate':
 						message = 'You can not attach "<em>{name}</em>" ({size}), it is already added!';
 						sub.size_max = Swiff.Uploader.formatUnit(this.base.options.fileSizeMax, 'b');
@@ -64,44 +55,55 @@ window.addEvent('domready', function() {
 				return this;
 			}
 			
-			this.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
-			this.title = new Element('span', {'class': 'file-title', text: this.data.file.name});
-			this.size = new Element('span', {'class': 'file-size', text: Swiff.Uploader.formatUnit(this.data.file.size, 'b')});
+			this.addEvents({
+				'open': this.onOpen,
+				'remove': this.onRemove,
+				'requeue': this.onRequeue,
+				'progress': this.onProgress,
+				'stop': this.onStop,
+				'complete': this.onComplete
+			});
 			
-			this.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
-			this.cancel.addEvent('click', function() {
+			this.ui = {};
+			
+			this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
+			this.ui.title = new Element('span', {'class': 'file-title', text: this.name});
+			this.ui.size = new Element('span', {'class': 'file-size', text: Swiff.Uploader.formatUnit(this.size, 'b')});
+			
+			this.ui.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
+			this.ui.cancel.addEvent('click', function() {
 				this.remove();
 				return false;
 			}.bind(this));
 			
 			var progress = new Element('img', {'class': 'file-progress', src: '../../assets/progress-bar/bar.gif'});
 
-			this.element.adopt(
-				this.title,
-				this.size,
+			this.ui.element.adopt(
+				this.ui.title,
+				this.ui.size,
 				progress,
-				this.cancel
+				this.ui.cancel
 			).inject(list).highlight();
 			
-			this.progress = new Fx.ProgressBar(progress, {
+			this.ui.progress = new Fx.ProgressBar(progress, {
 				fit: true
-			});
-			
+			}).set(0);
+						
 			this.base.reposition();
 
 			return this.parent();
 		},
 
 		onOpen: function() {
-			this.element.addClass('file-running');
+			this.ui.element.addClass('file-running');
 		},
 
 		onRemove: function() {
-			this.element.destroy();
+			this.ui = this.ui.element.destroy();
 		},
 
 		onProgress: function() {
-			this.progress.start(this.data.progress.percentLoaded);
+			this.ui.progress.start(this.progress.percentLoaded);
 		},
 
 		onStop: function() {
@@ -110,11 +112,11 @@ window.addEvent('domready', function() {
 
 		onComplete: function() {
 			// clean up ;)
-			this.progress = this.progress.cancel().element.destroy();
-			this.cancel = this.cancel.destroy();
+			this.ui.progress = this.ui.progress.cancel().element.destroy();
+			this.ui.cancel = this.ui.cancel.destroy();
 			
-			new Element('input', {type: 'checkbox', 'checked': true}).inject(this.element, 'top');
-			this.element.highlight('#e6efc2');
+			new Element('input', {type: 'checkbox', 'checked': true}).inject(this.ui.element, 'top');
+			this.ui.element.highlight('#e6efc2');
 			
 			// todo fun stuff
 		}
@@ -127,7 +129,7 @@ window.addEvent('domready', function() {
 
 	var swf = new Swiff.Uploader({
 		path: '/3-0/source/Swiff.Uploader.swf',
-		url: '/3-0/showcase/all-inclusive/script.php',
+		url: '../script.php',
 		verbose: true,
 		queued: false,
 		target: $('select-0'),
@@ -137,20 +139,22 @@ window.addEvent('domready', function() {
 		fileSizeMax: 25 * 1024 * 1024,
 		onBrowse: function() {},
 		onCancel: function() {},
-		onSelect: function(added, failed, data) {
-			if (data.files > 0) {
+		onSelectSuccess: function() {
+			if (this.fileList.length > 0) {
 				select.setStyle('display', 'none');
 				selectMore.setStyle('display', 'inline');
 				this.target = selectMore;
 				this.reposition();
 			}
-			if (added.length && Browser.Platform.linux) window.alert('Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nSince you are prepared now, the upload will start right away ...');
+			if (Browser.Platform.linux) window.alert('Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nSince you are prepared now, the upload will start right away ...');
 		},
-		onComplete: function(file, data) {
-			select.setStyle('display', 'inline');
-			selectMore.setStyle('display', 'none');
-			this.target = select;
-			this.reposition();
+		onFileRemove: function() {
+			if (this.fileList.length == 0) {
+				select.setStyle('display', 'inline');
+				selectMore.setStyle('display', 'none');
+				this.target = select;
+				this.reposition();
+			}
 		}
 	});
 	

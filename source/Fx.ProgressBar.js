@@ -15,6 +15,7 @@ Fx.ProgressBar = new Class({
 
 	options: {
 		text: null,
+		url: null,
 		transition: Fx.Transitions.Circ.easeOut,
 		fit: false,
 		link: 'cancel'
@@ -23,19 +24,26 @@ Fx.ProgressBar = new Class({
 	initialize: function(element, options) {
 		this.element = $(element);
 		this.parent(options);
-		this.text = $(this.options.text);
+				
+		var url = this.options.url;
+		if (url) {
+			this.element.setStyles({
+				'background-image': 'url(' + url + ')',
+				'background-repeat': 'no-repeat'
+			});
+		}
 		
 		// experimental
 		if (this.options.fit) {
-			var bg = this.element.getStyle('background-image');
-			if (bg && (bg = bg.replace(/^url\(["']?|["']?\)$/g, ''))) {
+			url = url || this.element.getStyle('background-image').replace(/^url\(["']?|["']?\)$/g, '');
+			if (url) {
 				var fill = new Image();
 				fill.onload = function() {
 					this.fill = fill.width;
 					fill = fill.onload = null;
 					this.set(this.now || 0);
 				}.bind(this);
-				fill.src = bg;
+				fill.src = url;
 				if (!this.fill && fill.width) fill.onload();
 			}
 		} else {
@@ -54,7 +62,9 @@ Fx.ProgressBar = new Class({
 			: ((100 - to) + '%');
 		
 		this.element.setStyle('backgroundPosition', css + ' 0px').title = Math.round(to) + '%';
-		if (this.text) this.text.set('text', Math.round(to) + '%');
+		
+		var text = $(this.options.text);
+		if (text) text.set('text', Math.round(to) + '%');
 		
 		return this;
 	}
