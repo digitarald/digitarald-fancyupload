@@ -51,10 +51,22 @@ window.addEvent('domready', function() {
 
 				this.ui.title.addEvent('click', this.remove.bind(this));
 			} else {
-				new Element('a', {html: 'Start', href: '#'}).addEvent('click', this.start.bind(this)).inject(this.ui.links);
-				new Element('a', {html: 'Stop', href: '#'}).addEvent('click', this.stop.bind(this)).inject(this.ui.links);
-				new Element('a', {html: 'Remove', href: '#'}).addEvent('click', this.remove.bind(this)).inject(this.ui.links);
-				new Element('a', {html: 'Requeue', href: '#'}).addEvent('click', this.requeue.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Start', href: '#'}).addEvent('click', function() {
+					this.start();
+					return false;
+				}.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Stop', href: '#'}).addEvent('click', function() {
+					this.stop();
+					return false;
+				}.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Remove', href: '#'}).addEvent('click', function() {
+					this.remove();
+					return false;
+				}.bind(this)).inject(this.ui.links);
+				new Element('a', {html: 'Requeue', href: '#'}).addEvent('click', function() {
+					this.requeue();
+					return false;
+				}.bind(this)).inject(this.ui.links);
 			}
 
 			this.ui.element.adopt(
@@ -101,7 +113,7 @@ window.addEvent('domready', function() {
 		onComplete: function() {
 			this.onStop();
 			this.ui.element.addClass('file-complete');
-			this.ui.status.set('text', this.response.text);
+			this.ui.status.set('text', this.response.text || this.response.error);
 		},
 
 		onRemove: function() {

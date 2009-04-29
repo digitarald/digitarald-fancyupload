@@ -261,6 +261,8 @@ package
 			if (status) buttonState = buttonState &~ BUTTON_STATE_DISABLED;
 			else buttonState = buttonState | BUTTON_STATE_DISABLED;
 			
+			buttonCursorSprite.useHandCursor = status;
+			
 			updateButton();
 		}
 		
@@ -385,11 +387,11 @@ package
 			
 			if (options.typeFilter is String) {
 				var description:String = options.typeFilterDescription || options.typeFilter;
-				var type:FileFilter = new FileFilter(description, options.typeFilter);
+				var type:FileFilter = new FileFilter(description, options.typeFilter + '; ' + options.typeFilter.toUpperCase() + '; ' + options.typeFilter.toLowerCase());
 				filter.push(type);
 			} else if (options.typeFilter is Object) {
 				for (var key:String in options.typeFilter) {
-					filter.push(new FileFilter(key, options.typeFilter[key]));
+					filter.push(new FileFilter(key, options.typeFilter[key] + '; ' + options.typeFilter[key].toUpperCase() + '; ' + options.typeFilter[key].toLowerCase()));
 				}
 			}
 			
@@ -445,6 +447,9 @@ package
 		
 		private function handleCancel(event:Event):void
 		{
+			buttonState = buttonState & ~ BUTTON_STATE_OVER;
+			updateButton();
+			
 			fireEvent('cancel');
 			
 			dialog = null;

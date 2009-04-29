@@ -6,11 +6,12 @@
 <flex-config>
   <compiler>
     <source-path append="true">
+      <path-element>C:\xampp\htdocs\flex\corelib</path-element>
       <path-element>C:\Program Files\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
   </compiler>
   <file-specs>
-    <path-element>C:\xampp\htdocs\uploader\3-0\source\as3proj\Main.as</path-element>
+    <path-element>C:\xampp\htdocs\digitarald\www08\pub\project\fancyupload\3-0\source\as3proj\Main.as</path-element>
   </file-specs>
   <default-background-color>#C0C0C0</default-background-color>
   <default-frame-rate>30</default-frame-rate>
