@@ -231,7 +231,6 @@ package
 		public function queueUpdate():Object
 		{
 			return {
-				files: fileList.length,
 				uploading: uploading,
 				size: size,
 				bytesLoaded: bytesLoaded,

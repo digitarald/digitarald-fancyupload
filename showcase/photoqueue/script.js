@@ -6,8 +6,10 @@
  * @copyright	Authors
  */
 
-window.addEvent('domready', function() {
+window.addEvent('domready', function() { // wait for the content
 
+	// our uploader instance 
+	
 	var up = new FancyUpload2($('demo-status'), $('demo-list'), {
 		url: $('form-demo').action,
 		path: '../../source/Swiff.Uploader.swf',
@@ -17,10 +19,12 @@ window.addEvent('domready', function() {
 		},
 		verbose: true,
 		target: 'demo-browse',
+		// graceful degradation, onLoad is only called if all went well with Flash
 		onLoad: function() {
-			$('demo-status').removeClass('hide');
-			$('demo-fallback').destroy();
+			$('demo-status').removeClass('hide'); // we show the actual UI
+			$('demo-fallback').destroy(); // ... and hide the plain form
 			
+			// We relay the interactions with the overlayed flash to the link
 			this.target.addEvents({
 				click: function() {
 					return false;
@@ -37,22 +41,28 @@ window.addEvent('domready', function() {
 				}
 			});
 
-			// Interactions for the 2 buttons
+			// Interactions for the 2 other buttons
 			
 			$('demo-clear').addEvent('click', function() {
-				up.remove();
+				up.remove(); // remove all files
 				return false;
 			});
 
 			$('demo-upload').addEvent('click', function() {
-				up.start();
+				up.start(); // start upload
 				return false;
 			});
 		},
 		
-		// edit the following lines, it is your custom event handling
+		// Edit the following lines, it is your custom event handling
+		
+		/**
+		 * Is called when files were not added, "files" is an array of invalid File classes.
+		 * 
+		 * This example creates a list of error elements directly in the file list, which
+		 * hide on click.
+		 */ 
 		onSelectFail: function(files) {
-			if (!files.length) return;
 			files.each(function(file) {
 				new Element('li', {
 					'class': 'validation-error',
@@ -67,6 +77,11 @@ window.addEvent('domready', function() {
 			}, this);
 		},
 		
+		/**
+		 * This one was directly in FancyUpload2 before, the event makes it
+		 * easier for you, to add your own response handling (you probably want
+		 * to send something else than JSON or different items).
+		 */
 		onFileSuccess: function(file, response) {
 			var json = $H(JSON.decode(response, true) || {});
 			
@@ -79,6 +94,10 @@ window.addEvent('domready', function() {
 			}
 		},
 		
+		/**
+		 * onFail is called when the Flash movie got bashed by some browser plugin
+		 * like Adblock or Flashblock.
+		 */
 		onFail: function(error) {
 			switch (error) {
 				case 'hidden': // works after enabling the movie and clicking refresh
@@ -91,6 +110,8 @@ window.addEvent('domready', function() {
 		}
 		
 	});
+	
+	// new FancyUpload2() returns false when the Flash version is older than 9
 	
 	if (!up) alert('To enable the embedded uploader, install the latest Adobe Flash plugin.');
 	

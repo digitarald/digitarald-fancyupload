@@ -8,11 +8,11 @@ Features {#features}
 
 * Select and upload multiple files
 * Filter files by type in the select dialog
-* Optional Events to add your own behaviour
+* A lot of possible Events to add your own behaviour
 * Show and filter useful file information before the upload starts
-* Limit uploads by file count and/or file size
-* Platform and *server independent*, just needs Flash 9+ (> 95% penetration)
-* Unobtrusive, since the element is replaced after the swf loaded successfully
+* Limit uploads by file count, type or size
+* Platform and *server independent*, just needs Flash 9+ (*> 95% penetration*)
+* Graceful Degradation, since the element is replaced after the Flash is loaded successfully
 * Cancel running uploads, add files during upload
 * Everything is optional, documented and easy editable
 * New in 2.0
@@ -20,8 +20,12 @@ Features {#features}
   * Shows the current upload speed and the time left
   * Send additional request data via GET or POST variables
   * Set the filename for the upload request
-* New in 2.1
-	* **Works in Flash 10** by adding a clickable overlay
+* New in 3.0 (Completely rewritten API)
+	* Fully Flash 9 and 10 compatible and an additional IFrame-based uploader
+	* Browse-button can be an invisible overlay or an image sprite (for the different states)
+	* Event based Flash communication, future-proof und more stable 
+	* File-specific options for setting url, data, method
+	* Relative URLs are converted automatically
 
 
 Compatibility {#compatibility}
@@ -34,9 +38,139 @@ with [Adobe Flash 9 and 10](http://www.adobe.com/products/flashplayer/) player.
 How to use {#how-to}
 -------------------
 
-Will be written for the final release, at this time the showcases are the best documentation.
+The [available showcases](#showcases) show off documented code snippets with various use cases.
 
-Tips, Tricks and Quirks {#faq}
+Documentation {#docs}
+-------------------
+
+### Class: Swiff.Uploader
+
+#### Extends:
+
+- [Swiff](http://mootools.net/docs/core/Utilities/Swiff)
+
+#### Syntax:
+
+	var uploader = new Swiff.Uploader([options]);
+
+#### Arguments:
+
+1. options - (*object*, optional) See options below.  Also inherited are all the options from [Swiff](http://mootools.net/docs/core/Utilities/Swiff).
+
+### Returns:
+
+* (*object|false*) - New Swiff.Uploader instance or false if detected Flash version is smaller than 9.
+
+#### Options:
+
+* path - (*string*: defaults to "Swiff.Uploader.swf") The relative or absolute path to the Flash movie (*Swiff.Uploader.swf*) on the server
+* height: (*number*: defaults to 30) Only needed if you use *buttonImage*, otherwise its handled positioned over the *target*.
+* width: (*number*: defaults to 100) Only needed if you use *buttonImage*, otherwise its handled positioned over the *target*. 
+* typeFilter: (*object|string*: defaults to null) Key/value pairs are used as filters for the dialog. Possible pair would be `'Images (*.jpg, *.jpeg, *.gif, *.png)': '*.jpg; *.jpeg; *.gif; *.png'`.
+* multiple: (*boolean*: defaults to true) If true, the browse-dialog allows multiple-file selection.
+* queued: (*number*: defaults to 1) Maximum of currently running files. If this is false, all files are uploaded at once.
+* verbose: (*boolean*: defaults to false) Debug mode, logs messages and all events from Flash during development (using *console.info*).
+* target: (*element*: defaults to null) If given, the browse-element is overlayed with a transparent movie. The Events *click/mouseenter/mouseleave/disabled* are fired as events on *target*.
+* zIndex: (*number*: defaults to 9999) Only used if a *target* is given, this sets the z-index for the overlay.
+* buttonImage: (*string*: defaults to null) Sprite for the upload button, has to have 4 states vertical aligned: Normal, hovered, clicked and disabled. Make sure to adapt the options *width* and *height*.
+* url: (*string*: defaults to null) URL to the server-side script (relative URLs are changed automatically to absolute paths). 
+* method: (*string*: defaults to 'post') If the method is 'get', *data* is appended as query-string to the URL. The upload will always be a POST request.
+* data: (*object|string*: defaults to null) Key/data values that are sent with the upload requests.
+* mergeData: (*boolean*: defaults to true) If true, the *data* option from uploader and file is merged (prioritised file data).
+* fieldName: (*string*: defaults to "Filedata") The key of the uploaded file on your server, similar to *name* in a file-input. Linux Flash ignores it, better avoid it.
+* fileSizeMin: (*number*: defaults to 1) Validates the minimal size of a selected file *byte*.
+* fileSizeMax: (*number*: defaults to 0) Validates the maximal size of a selected file (official limit is 100 MB for FileReference) 
+* allowDuplicates: (*boolean*: defaults to false) Validates that no duplicate files are added.
+* fileListMax: (*number*: defaults to 0) Validates the overall file count.
+* fileListSizeMax: (*number*: defaults to 0) Validates the overall file size in *byte*.
+* instantStart: (*boolean*: defaults to false) If true, the upload starts right after a successful file selection.
+* appendCookieData: (*boolean|string*: defaults to false) If this is not false, the cookies of the browser are merged into the given options *data*. If a string is given, it is used as key for the *data*. 
+* fileClass: (*class*: defaults to *Swiff.Uploader.File*) An instance of this class is created for every selected file.
+
+#### Events:
+
+* load - (*function*) Function to execute when the Flash movie is initialised.
+* fail - (*function*) Function to execute when the loading is prevented. First argument can be "blocked" when the user has to enable the movie manually because of Flashblock or "hidden" when Adblock Plus blocks hides the movie
+* start - (*function*) Function to execute when the upload starts.
+* queue - (*function*) Function to execute when the queue statistics are updated.
+* complete - (*function*) Function to execute when all files are uploaded (or stopped).
+* browse - (*function*) Function to execute when the browse-dialog opens.
+* disabledBrowse - (*function*) Function to execute when the user tries to open the browse-dialog, but the uploader is disabled.
+* cancel - (*function*) Function to execute when the user closes the browse-dialog without a selection.
+* select - (*function*) Function to execute when the user selected files in the dialog. Preferred events are *selectSuccess* and *selectFail*!
+	1. successFiles - (*array|null*) Raw file data for successfully added files.
+	2. failFiles - (*array|null*) Raw file data for invalid files that were not added.
+* selectSuccess - (*function*) Function to execute when files were selected and validated successfully!
+	1. successFiles - (*array|null*) Added file instances (see option *fileClass*).
+* selectFail - (*function*) Function to execute when files were selected and failed validation!
+	1. failFiles - (*array|null*) Dismissed file instances (see option *fileClass*).
+* buttonEnter - (*function*) Function to execute when the mouse enters the browse button.
+* buttonLeave - (*function*) Function to execute when the mouse leave the browse button.
+* buttonDown - (*function*) Function to execute when the mouse clicks the browse button. 
+* buttonDisable - (*function*) Function to execute when the script disables the browse button. 
+* fileStart - (*function*) Function to execute when flash initialised the upload for a file. 
+* fileStop - (*function*) Function to execute when a file got stopped manually.
+* fileRequeue - (*function*) Function to execute when a file got added back to the queue after being stopped or completed.
+* fileOpen - (*function*) Function to execute when the file is accessed before for upload.
+* fileProgress - (*function*) Function to execute when the upload reports progress.
+* fileComplete - (*function*) Function to execute when a file is uploaded or failed with an error.
+* fileRemove - (*function*) Function to execute when a file got removed.
+
+Every Event starting with `file` is also called on the `Swiff.Uploader.File` class, without prepended `file`. 
+
+#### Swiff.Uploader Method: start
+
+Starts the upload process.
+
+#### Swiff.Uploader Method: stop
+
+Stops all running files.
+
+#### Swiff.Uploader Method: remove
+
+Remove all files from the list.
+
+#### Swiff.Uploader Method: reposition
+
+Updates the position for the movie overlay, if you use option `target`.
+
+##### Arguments:
+
+1. coordinates - (*object*, optional) New coordinates (*left/top/width/height*), automatically detected from the current *target*.
+
+#### Swiff.Uploader Method: setEnabled
+
+Enables or disables the browse button.
+
+##### Arguments:
+
+1. status - (*boolean*, optional) Toggles the current status if no value if provided, otherwise updates the status to the given value.
+
+#### Swiff.Uploader Property: target
+
+The *target* Element from the options, override it if you switch your browser button.
+
+#### Swiff.Uploader Property: uploading
+
+The number of running uploads.
+
+#### Swiff.Uploader Property: size
+
+The overall size of all files in the list in *byte*.
+
+#### Swiff.Uploader Property: bytesLoaded
+
+The overall loaded size of running and completed files in the list in *byte*. 
+
+#### Swiff.Uploader Property: bytesLoaded
+
+The overall loaded percentage of running and completed files in the list.
+
+#### Swiff.Uploader Property: rate
+
+The overall rate of running files in the list in *bytes/second*.
+
+FAQ: Tips, Tricks, Quirks {#faq}
 -------------------
 
 How do I access the uploaded files?
@@ -56,9 +190,7 @@ Flash-request forgets cookies and session ID
 
 Are cross-domain uploads possible?
 
-:	*Fixed in the new version.* [Forum solution](http://forum.mootools.net/viewtopic.php?id=8312), and FileReference docs:
-
-	> For uploading and downloading operations, a SWF file can access files only within its own domain, including any domains that are specified by a cross-domain policy file. If the SWF that is initiating the upload or download doesn't come from the same domain as the file server, you must put a policy file on the file server.
+:	> For uploading and downloading operations, a SWF file can access files only within its own domain, including any domains that are specified by a cross-domain policy file. If the SWF that is initiating the upload or download doesn't come from the same domain as the file server, you must put a policy file on the file server.
 	[More on security and link to cross-domain policies](http://livedocs.adobe.com/flash/8/main/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&file=00001590.html)
 
 FancyUpload does not load, the input element gets not replaced

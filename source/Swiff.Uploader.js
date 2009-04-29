@@ -17,7 +17,6 @@ Swiff.Uploader = new Class({
 
 	options: {
 		path: 'Swiff.Uploader.swf',
-		id: 'SwiffUploader',
 		
 		target: null,
 		zIndex: 9999,
@@ -57,6 +56,7 @@ Swiff.Uploader = new Class({
 		fileClass: null
 		/*
 		onLoad: $empty,
+		onFail: $empty,
 		onStart: $empty,
 		onQueue: $empty,
 		onComplete: $empty,
