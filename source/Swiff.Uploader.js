@@ -241,7 +241,7 @@ Swiff.Uploader = new Class({
 		// update coordinates, manual or automatically
 		this.box.setStyles(coords || (this.target && this.target.offsetHeight)
 			? this.target.getCoordinates(this.box.getOffsetParent())
-			: {top: 0, left: 0, width: 200, height: 200}
+			: {top: window.getScrollTop(), left: 0, width: 40, height: 40}
 		);
 	},
 

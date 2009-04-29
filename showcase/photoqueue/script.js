@@ -11,15 +11,31 @@ window.addEvent('domready', function() {
 	var up = new FancyUpload2($('demo-status'), $('demo-list'), {
 		url: $('form-demo').action,
 		path: '../../source/Swiff.Uploader.swf',
+		// remove that line to select all files, or edit it, add more items
 		typeFilter: {
 			'Images (*.jpg, *.jpeg, *.gif, *.png)': '*.jpg; *.jpeg; *.gif; *.png'
 		},
-		fileListMax: 2,
 		verbose: true,
 		target: 'demo-browse',
 		onLoad: function() {
 			$('demo-status').removeClass('hide');
 			$('demo-fallback').destroy();
+			
+			this.target.addEvents({
+				click: function() {
+					return false;
+				},
+				mouseenter: function() {
+					this.addClass('hover');
+				},
+				mouseleave: function() {
+					this.removeClass('hover');
+					this.blur();
+				},
+				mousedown: function() {
+					this.focus();
+				}
+			});
 
 			// Interactions for the 2 buttons
 			
