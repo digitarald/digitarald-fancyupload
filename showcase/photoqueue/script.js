@@ -1,64 +1,83 @@
+/**
+ * FancyUpload Showcase
+ *
+ * @license		MIT License
+ * @author		Harald Kirschner <mail [at] digitarald [dot] de>
+ * @copyright	Authors
+ */
+
 window.addEvent('domready', function() {
 
-	// For testing, showing the user the current Flash version.
-	document.getElement('#demo-status p').appendText(' | Flash ' + Browser.Plugins.Flash.version + '!');
-
-	var swiffy = new FancyUpload2($('demo-status'), $('demo-list'), {
+	var up = new FancyUpload2($('demo-status'), $('demo-list'), {
 		url: $('form-demo').action,
-		fieldName: 'photoupload',
 		path: '../../source/Swiff.Uploader.swf',
-		limitSize: 2 * 1024 * 1024, // 2Mb
+		typeFilter: {
+			'Images (*.jpg, *.jpeg, *.gif, *.png)': '*.jpg; *.jpeg; *.gif; *.png'
+		},
+		fileListMax: 2,
+		verbose: true,
+		target: 'demo-browse',
 		onLoad: function() {
 			$('demo-status').removeClass('hide');
 			$('demo-fallback').destroy();
+
+			// Interactions for the 2 buttons
+			
+			$('demo-clear').addEvent('click', function() {
+				up.remove();
+				return false;
+			});
+
+			$('demo-upload').addEvent('click', function() {
+				up.start();
+				return false;
+			});
 		},
-		//fileInvalid: function(file, errors) {
-		//	alert(errors.join(' '));
-		//},
-		// The changed parts!
-		debug: true, // enable logs, uses console.log
-		target: 'demo-browse' // the element for the overlay (Flash 10 only)
-	});
-
-	/**
-	 * Various interactions
-	 */
-
-	$('demo-browse').addEvent('click', function() {
-		/**
-		 * Doesn't work anymore with Flash 10: swiffy.browse();
-		 * FancyUpload moves the Flash movie as overlay over the link.
-		 * (see opeion "target" above)
-		 */
-		swiffy.browse();
-		return false;
-	});
-
-	/**
-	 * The *NEW* way to set the typeFilter, since Flash 10 does not call
-	 * swiffy.browse(), we need to change the type manually before the browse-click.
-	 */
-	$('demo-select-images').addEvent('change', function() {
-		var filter = null;
-		if (this.checked) {
-			filter = {'Images (*.jpg, *.jpeg, *.gif, *.png)': '*.jpg; *.jpeg; *.gif; *.png'};
+		
+		// edit the following lines, it is your custom event handling
+		onSelectFail: function(files) {
+			if (!files.length) return;
+			files.each(function(file) {
+				new Element('li', {
+					'class': 'validation-error',
+					html: file.validationErrorMessage || file.validationError,
+					title: MooTools.lang.get('FancyUpload', 'removeTitle'),
+					events: {
+						click: function() {
+							this.destroy();
+						}
+					}
+				}).inject(this.list, 'top');
+			}, this);
+		},
+		
+		onFileSuccess: function(file, response) {
+			var json = $H(JSON.decode(response, true) || {});
+			
+			if (json.get('status') == '1') {
+				file.element.addClass('file-success');
+				file.info.set('html', json.get('width') + ' x ' + json.get('height') + 'px ' + json.get('mime'));
+			} else {
+				file.element.addClass('file-failed');
+				file.info.set('html', json.get('error') || response);
+			}
+		},
+		
+		onFail: function(error) {
+			switch (error) {
+				case 'flash': // huge fail, bail out
+					alert('To enable the embedded uploader, install the latest Adobe Flash plugin.');
+					break;
+				case 'hidden': // works after enabling the movie and clicking refresh
+					alert('To enable the embedded uploader, unblock it in your browser and refresh (see Adblock).');
+					break;
+				case 'blocked': // This no *full* fail, it works after the user clicks the button
+					alert('To enable the embedded uploader, enable the blocked Flash movie (see Flashblock).');
+					break;
+			}
+			
 		}
-		swiffy.options.typeFilter = filter;
+		
 	});
-
-	$('demo-clear').addEvent('click', function() {
-		swiffy.removeFile();
-		return false;
-	});
-
-	$('demo-upload').addEvent('click', function() {
-		swiffy.upload();
-		return false;
-	});
-
+	
 });
-
-function onLoad() {
-console.log('Called', arguments);
-	return 'true';
-}

@@ -1,10 +1,11 @@
 {
-	"title": "Queued Photo Uploader (Fixed)",
-	"description": "Showcase with FancyUpload preview version.",
+	"title": "Queued Photo Uploader",
+	"description": "Showcase with converted FancyUpload.",
 	"files": [
-		"/assets/mootools-1.2.1-core-nc.js",
+		"/assets/mootools-1.2-core.js",
 		"../../source/Swiff.Uploader.js",
 		"../../source/Fx.ProgressBar.js",
-		"../../source/FancyUpload2.js"
+		"http://github.com/mootools/mootools-more/raw/master/Source/Core/Lang.js",
+		"FancyUpload2.js"
 	]
 }

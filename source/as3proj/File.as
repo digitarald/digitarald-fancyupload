@@ -83,7 +83,6 @@ package
 			reference.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleSecurityError);
 			
 			fileExtension = reference.name.replace(/.+\.([^.]+)$/, '$1').toLowerCase();
-			parent.size += reference.size;
 			
 			addDate = new Date();
 		}

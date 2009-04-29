@@ -1,7 +1,7 @@
 {
-	"title": "IFrame Queue",
+	"title": "Attach a File with IFrames",
 	"files": [
-		"/assets/mootools-1.2.1-core-nc.js",
+		"/assets/mootools-1.2-core.js",
 		"../../source/Fx.ProgressBar.js",
 		"../../source/Uploader.js"
 	]

@@ -250,7 +250,9 @@ package
 		
 		private function xStart():void
 		{
+			if (uploading) return;
 			checkQueue();
+			if (uploading) fireEvent('start');
 		}
 		
 		private function xSetEnabled(status:* = null):void
@@ -289,7 +291,7 @@ package
 			for (var i:uint = 0; i < length; i++) {
 				if (fileList[i].status != File.STATUS_QUEUED) continue;
 				fileList[i].start();
-				if (queued && uploading >= queued) return;
+				if (queued && uploading >= queued) break;
 			}
 			
 			if (!uploading && eventful) fireEvent('complete', [queueUpdate()]);
@@ -407,7 +409,7 @@ package
 		
 		private function handleSelect(event:Event):void
 		{
-			verboseLog('Main::handleSelect');
+			verboseLog('Main::handleSelect Adding Files');
 			
 			var added:Array = new Array();
 			
@@ -431,6 +433,7 @@ package
 					failed.push(ref);
 					return false;
 				}
+				size += ref.reference.size;
 				return true;
 			});
 			

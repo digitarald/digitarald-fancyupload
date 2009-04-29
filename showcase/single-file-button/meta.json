@@ -1,8 +1,10 @@
 {
-	"title": "Simple Button",
+	"title": "Single File Button",
 	"files": [
-		"/assets/mootools-1.2.1-core-nc.js",
+		"/assets/mootools-1.2-core.js",
 		"../../source/Fx.ProgressBar.js",
-		"../../source/Swiff.Uploader.js"
+		"../../source/Swiff.Uploader.js",
+		"http://digitarald.de/project/roar/1-0/source/Roar.js",
+		"http://digitarald.de/project/roar/1-0/assets/Roar.css"
 	]
 }

@@ -12,13 +12,32 @@
 var FancyUpload2 = new Class({
 
 	Extends: Swiff.Uploader,
+	
+	options: {
+		queued: 1,
+		limitSize: 0,
+		limitFiles: 0,
+		validateFile: $lambda(true)
+	},
 
 	initialize: function(status, list, options) {
 		this.status = $(status);
 		this.list = $(list);
+
+		if (!options.fileClass) options.fileClass = FancyUpload2.File;
+		if (options.limitSize) options.fileSizeMax = options.limitSize;
+		if (options.limitFiles) options.fileListMax = options.limitFiles;
 		
 		this.parent(options);
-		this.render();
+
+		this.addEvents({
+			'load': this.render,
+			'select': this.onSelect,
+			'cancel': this.onCancel,
+			'start': this.onStart,
+			'queue': this.onQueue,
+			'complete': this.onComplete
+		});
 	},
 
 	render: function() {
@@ -34,100 +53,81 @@ var FancyUpload2 = new Class({
 		this.currentProgress = new Fx.ProgressBar(progress, {
 			text: new Element('span', {'class': 'progress-text'}).inject(progress, 'after')
 		});
+		
+		this.updateOverall();
 	},
 
-	onSelect: function(file, index, length) {
-		var errors = [];
-		if (this.options.limitSize && (file.size > this.options.limitSize)) errors.push('size');
-		if (this.options.limitFiles && (this.countFiles() >= this.options.limitFiles)) errors.push('length');
-		if (!this.options.allowDuplicates && this.getFile(file)) errors.push('duplicate');
-		if (!this.options.validateFile.call(this, file, errors)) errors.push('custom');
-		if (errors.length) {
-			var fn = this.options.fileInvalid;
-			this.log(errors);
-			if (fn) fn.call(this, file, errors);
-			return false;
-		}
-		(this.options.fileCreate || this.fileCreate).delay(10, this, file);
-		this.files.push(file);
-		return true;
-	},
-
-	onAllSelect: function(files, current, overall) {
-		this.log('Added ' + files.length + ' files, now we have (' + current.bytesTotal + ' bytes).', arguments);
-		this.updateOverall(current.bytesTotal);
+	onSelect: function() {
 		this.status.removeClass('status-browsing');
-		if (this.files.length && this.options.instantStart) this.upload.delay(10, this);
-	},
-
-	onComplete: function(file, response) {
-		this.log('Completed upload "' + file.name + '".', arguments);
-		this.currentText.set('html', 'Upload complete!');
-		this.currentProgress.start(100);
-		(this.options.fileComplete || this.fileComplete).call(this, this.finishFile(file), response);
-	},
-
-	onError: function(file, error, info) {
-		this.log('Upload "' + file.name + '" failed. "{1}": "{2}".', arguments);
-		(this.options.fileError || this.fileError).call(this, this.finishFile(file), error, info);
 	},
 
 	onCancel: function() {
 		this.status.removeClass('file-browsing');
 	},
 
-	onAllComplete: function(current) {
-		this.updateOverall(current.bytesTotal);
-		this.overallProgress.start(100);
-		this.status.removeClass('file-uploading');
+	onStart: function() {
+		this.status.addClass('file-uploading');
+		this.overallProgress.set(0);
 	},
 
-	upload: function(options) {
-		var ret = this.parent(options);
-		if (ret !== true) {
-			this.log('Upload in progress or nothing to upload.');
-			if (ret) alert(ret);
+	onQueue: function() {
+		this.updateOverall();
+	},
+
+	onComplete: function() {
+		this.status.removeClass('file-uploading');
+		if (this.size) {
+			this.overallProgress.start(100);
 		} else {
-			this.log('Upload started.');
-			this.status.addClass('file-uploading');
 			this.overallProgress.set(0);
+			this.currentProgress.set(0);
+		}
+		
+	},
+
+	updateOverall: function() {
+		this.overallTitle.set('html', MooTools.lang.get('FancyUpload', 'progressOverall').substitute({
+			total: Swiff.Uploader.formatUnit(this.size, 'b')
+		}));
+		if (!this.size) {
+			this.currentTitle.set('html', MooTools.lang.get('FancyUpload', 'currentTitle'));
+			this.currentText.set('html', '');
 		}
 	},
-
-	updateOverall: function(bytesTotal) {
-		this.bytesTotal = bytesTotal;
-		this.overallTitle.set('html', FancyUpload2.lang.get('progress.overall').substitute({
-			total: this.sizeToKB(bytesTotal)
-		}));
+	
+	/**
+	 * compat
+	 */
+	upload: function() {
+		this.start();
+	},
+	
+	removeFile: function() {
+		return this.remove();
 	}
 
-});
-
-FancyUpload2.lang = new Hash({
-	'progress.overall': 'Overall Progress ({total})',
-	'progress.file': 'File Progress "{name}"',
-	'file.name': '{name}',
-	'file.remove': 'Remove',
-	'file.error': '<strong>{error}</strong><br />{info}'
 });
 
 FancyUpload2.File = new Class({
 	
 	Extends: Swiff.Uploader.File,
 
-	initialize: function(uploader, data) {
-		this.parent(uploader, data);
-	},
-
 	render: function() {
-
+		if (this.invalid) {
+			if (this.validationError) {
+				var msg = MooTools.lang.get('FancyUpload', 'validationErrors')[this.validationError] || this.validationError;
+				this.validationErrorMessage = msg.substitute(this);
+			}
+			this.remove();
+			return;
+		}
+		
 		this.addEvents({
-			'open': this.onOpen,
-			'remove': this.onRemove,
-			'requeue': this.onRequeue,
+			'start': this.onStart,
 			'progress': this.onProgress,
-			'stop': this.onStop,
-			'complete': this.onComplete
+			'complete': this.onComplete,
+			'error': this.onError,
+			'remove': this.onRemove
 		});
 		
 		this.info = new Element('span', {'class': 'file-info'});
@@ -136,7 +136,8 @@ FancyUpload2.File = new Class({
 			new Element('a', {
 				'class': 'file-remove',
 				href: '#',
-				html: FancyUpload2.lang.get('file.remove').substitute(this),
+				html: MooTools.lang.get('FancyUpload', 'remove'),
+				title: MooTools.lang.get('FancyUpload', 'removeTitle'),
 				events: {
 					click: function() {
 						this.remove();
@@ -144,35 +145,83 @@ FancyUpload2.File = new Class({
 					}.bind(this)
 				}
 			}),
-			new Element('span', {'class': 'file-name', 'html': FancyUpload2.lang.get('file.name').substitute(file)})
+			new Element('span', {'class': 'file-name', 'html': MooTools.lang.get('FancyUpload', 'fileName').substitute(this)}),
+			this.info
 		).inject(this.base.list);
+	},
+	
+	validate: function() {
+		return (this.parent() && this.base.options.validateFile(this));
+	},
+	
+	onStart: function() {
+		this.element.addClass('file-uploading');
+		this.base.currentProgress.cancel().set(0);
+		this.base.currentTitle.set('html', MooTools.lang.get('FancyUpload', 'currentFile').substitute(this));
+	},
+
+	onProgress: function() {
+		this.base.overallProgress.start(this.base.percentLoaded);
+		this.base.currentText.set('html', MooTools.lang.get('FancyUpload', 'currentProgress').substitute({
+			rate: (this.progress.rate) ? Swiff.Uploader.formatUnit(this.progress.rate, 'bps') : '- B',
+			bytesLoaded: Swiff.Uploader.formatUnit(this.progress.bytesLoaded, 'b'),
+			timeRemaining: (this.progress.timeRemaining) ? Swiff.Uploader.formatUnit(this.progress.timeRemaining, 's') : '-'
+		}));
+		this.base.currentProgress.start(this.progress.percentLoaded);
 	},
 	
 	onComplete: function() {
 		this.element.removeClass('file-uploading');
 		
-		var response = this.response.responseText || '';
-		var json = $H(JSON.decode(response, true) || {});
-		if (json.get('result') == 'success') {
-			this.element.addClass('file-success');
-			this.info.set('html', json.get('size'));
-		} else {
-			this.element.addClass('file-failed');
-			this.info.set('html', json.get('error') || response);
+		this.base.currentText.set('html', 'Upload completed');
+		this.base.currentProgress.start(100);
+		
+		if (this.response.error) {
+			this.fireEvent('error');
+			return;
 		}
+		
+		var response = this.response.text || '';
+		
+		this.base.fireEvent('onFileSuccess', [this, response]);
 	},
 
 	onError: function() {
-		this.element.removeClass('file-uploading');
-		
 		this.element.addClass('file-failed');
-		this.info.set('html', FancyUpload2.lang.get('file.error').substitute({
-			file: this, error: this.response.responseCode, info: this.response.responseError
-		}));
+
+		var error = MooTools.lang.get('FancyUpload', 'fileError').substitute(this);
+		
+		var info = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || (this.response.error + ' #' + this.response.code);
+		info = info.substitute(this).substitute(this.response);
+				
+		this.info.set('html', '<strong>' + error + ':</strong> ' + info);
 	},
 
-	onRemove: function(file) {
+	onRemove: function() {
 		this.element.fade('out').retrieve('tween').chain(Element.destroy.bind(Element, this.element));
-	},
+	}
 	
+});
+
+MooTools.lang.set('en-US', 'FancyUpload', {
+	'progressOverall': 'Overall Progress ({total})',
+	'currentTitle': 'File Progress',
+	'currentFile': 'Uploading "{name}"',
+	'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
+	'fileName': '{name}',
+	'remove': 'Remove',
+	'removeTitle': 'Click to remove this entry.',
+	'fileError': 'File was not uploaded',
+	'validationErrors': {
+		'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
+		'sizeLimitMin': 'File <em>{name}</em> is too small, please check the minimal file size.',
+		'sizeLimitMax': 'File <em>{name}</em> is too big, please check the maximal file size.',
+		'fileListMax': 'File <em>{name}</em> could not be added, amount of files exceeded limit.',
+		'fileListSizeMax': 'File <em>{name}</em> is too big, overall filesize exceeded limit.'
+	},
+	'errors': {
+		'httpError': 'Server returned HTTP-Status #{code}',
+		'securityError': 'Security error occured ({text})',
+		'ioError': 'Error caused a send or load operation to fail ({text})'
+	}
 });

@@ -22,8 +22,8 @@ Swiff.Uploader = new Class({
 		target: null,
 		zIndex: 9999,
 		
-		height: 22,
-		width: 61,
+		height: 30,
+		width: 100,
 		callBacks: null,
 		params: {
 			wMode: 'opaque',
@@ -55,16 +55,43 @@ Swiff.Uploader = new Class({
 		appendCookieData: false,
 		
 		fileClass: null
-
+		/*
+		onLoad: $empty,
+		onStart: $empty,
+		onQueue: $empty,
+		onComplete: $empty,
+		onBrowse: $empty,
+		onDisabledBrowse: $empty,
+		onCancel: $empty,
+		onSelect: $empty,
+		onSelectSuccess: $empty,
+		onSelectFail: $empty,
+		
+		onButtonEnter: $empty,
+		onButtonLeave: $empty,
+		onButtonDown: $empty,
+		onButtonDisable: $empty,
+		
+		onFileStart: $empty,
+		onFileStop: $empty,
+		onFileRequeue: $empty,
+		onFileOpen: $empty,
+		onFileProgress: $empty,
+		onFileComplete: $empty,
+		onFileRemove: $empty
+		*/
 	},
 
 	initialize: function(options) {
-		if (Browser.Plugins.Flash.version < 9) return false;
+		if (Browser.Plugins.Flash.version < 9) {
+			this.fireEvent('fail', ['flash'], 10);
+			return this;
+		}
 
 		// protected events to control the class, added
 		// before setting options (which adds own events)
-		this.addEvent('load', this.onLoad, true)
-			.addEvent('select', this.onSelect, true)
+		this.addEvent('load', this.initializeSwiff, true)
+			.addEvent('select', this.processFiles, true)
 			.addEvent('complete', this.update, true);
 
 		this.setOptions(options);
@@ -109,6 +136,8 @@ Swiff.Uploader = new Class({
 				width: '100%'
 			});
 			
+			this.target.addEvent('mouseenter', this.reposition.bind(this, []));
+			
 			// button interactions, relayed to to the target
 			this.addEvents({
 				buttonEnter: this.targetRelay.bind(this, ['mouseenter']),
@@ -127,7 +156,21 @@ Swiff.Uploader = new Class({
 
 		this.fileListSize = 0;
 		this.fileList = [];
+		
+		this.size = this.uploading = this.bytesLoaded = this.percentLoaded = 0;
+		
+		this.verifyLoad.delay(500, this);
+		
 		return this;
+	},
+	
+	verifyLoad: function() {
+		if (this.loaded) return;
+		if (!this.object.parentNode) {
+			this.fireEvent('fail', ['blocked']);
+		} else if (!this.object.offsetHeight) {
+			this.fireEvent('fail', ['hidden']);
+		}
 	},
 
 	fireCallback: function(name, args) {
@@ -136,6 +179,7 @@ Swiff.Uploader = new Class({
 			// updated queue data is the second argument
 			if (args.length > 1) this.update(args[1]);
 			var data = args[0];
+			
 			var file = this.findFile(data.id);
 			if (file) {
 				var fire = name.replace(/^file([A-Z])/, function($0, $1) {
@@ -164,7 +208,7 @@ Swiff.Uploader = new Class({
 		return null;
 	},
 
-	onLoad: function() {
+	initializeSwiff: function() {
 		// extracted options for the swf 
 		this.remote('initialize', {
 			width: this.options.width,
@@ -197,7 +241,7 @@ Swiff.Uploader = new Class({
 		// update coordinates, manual or automatically
 		this.box.setStyles(coords || (this.target && this.target.offsetHeight)
 			? this.target.getCoordinates(this.box.getOffsetParent())
-			: {top: 0, left: 0, width: 0, height: 0}
+			: {top: 0, left: 0, width: 200, height: 200}
 		);
 	},
 
@@ -262,7 +306,7 @@ Swiff.Uploader = new Class({
 		this.setOptions({data: data});
 	},
 
-	onSelect: function(successraw, failraw, queue) {
+	processFiles: function(successraw, failraw, queue) {
 		var cls = this.options.fileClass || Swiff.Uploader.File;
 
 		var fail = [], success = [];
@@ -310,7 +354,7 @@ $extend(Swiff.Uploader, {
 	STATUS_STOPPED: 4,
 
 	log: function() {
-		if (window.console) console.info.apply(console, arguments);
+		if (window.console && console.info) console.info.apply(console, arguments);
 	},
 
 	unitLabels: {
@@ -384,7 +428,7 @@ Swiff.Uploader.File = new Class({
 		}
 		
 		if (options.fileListSizeMax && (this.base.fileListSize + this.size) > options.fileListSizeMax) {
-			this.validationError = 'fileListMax';
+			this.validationError = 'fileListSizeMax';
 			return false;
 		}
 		
@@ -393,7 +437,8 @@ Swiff.Uploader.File = new Class({
 
 	invalidate: function() {
 		this.invalid = true;
-		return this.fireEvent('invalid');
+		this.base.fireEvent('fileInvalid', this, 10);
+		return this.fireEvent('invalid', this, 10);
 	},
 
 	render: function() {
