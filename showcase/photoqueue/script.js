@@ -81,19 +81,17 @@ window.addEvent('domready', function() {
 		
 		onFail: function(error) {
 			switch (error) {
-				case 'flash': // huge fail, bail out
-					alert('To enable the embedded uploader, install the latest Adobe Flash plugin.');
-					break;
 				case 'hidden': // works after enabling the movie and clicking refresh
 					alert('To enable the embedded uploader, unblock it in your browser and refresh (see Adblock).');
 					break;
 				case 'blocked': // This no *full* fail, it works after the user clicks the button
 					alert('To enable the embedded uploader, enable the blocked Flash movie (see Flashblock).');
-					break;
 			}
 			
 		}
 		
 	});
+	
+	if (!up) alert('To enable the embedded uploader, install the latest Adobe Flash plugin.');
 	
 });

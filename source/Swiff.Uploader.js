@@ -83,10 +83,7 @@ Swiff.Uploader = new Class({
 	},
 
 	initialize: function(options) {
-		if (Browser.Plugins.Flash.version < 9) {
-			this.fireEvent('fail', ['flash'], 10);
-			return this;
-		}
+		if (Browser.Plugins.Flash.version < 9) return false;
 
 		// protected events to control the class, added
 		// before setting options (which adds own events)
