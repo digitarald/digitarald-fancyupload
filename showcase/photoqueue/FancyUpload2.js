@@ -1,7 +1,7 @@
 /**
  * FancyUpload - Flash meets Ajax for powerful and elegant uploads.
  *
- * @version		2.1
+ * @version		3.0-rc0
  *
  * @license		MIT License
  *
@@ -15,6 +15,7 @@ var FancyUpload2 = new Class({
 	
 	options: {
 		queued: 1,
+		// compat
 		limitSize: 0,
 		limitFiles: 0,
 		validateFile: $lambda(true)
@@ -24,10 +25,11 @@ var FancyUpload2 = new Class({
 		this.status = $(status);
 		this.list = $(list);
 
+		// compat
 		if (!options.fileClass) options.fileClass = FancyUpload2.File;
 		if (options.limitSize) options.fileSizeMax = options.limitSize;
 		if (options.limitFiles) options.fileListMax = options.limitFiles;
-		
+
 		this.parent(options);
 
 		this.addEvents({

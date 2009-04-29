@@ -1,3 +1,10 @@
+/**
+ * FancyUpload Showcase
+ *
+ * @license		MIT License
+ * @author		Harald Kirschner <mail [at] digitarald [dot] de>
+ * @copyright	Authors
+ */
 
 window.addEvent('domready', function() {
 
@@ -191,12 +198,12 @@ window.addEvent('domready', function() {
 	 */
 
 	var swf = new Swiff.Uploader({
-		path: '/3-0/source/Swiff.Uploader.swf',
+		path: '../../source/Swiff.Uploader.swf',
 		url: $('option-url').value,
 		verbose: true,
 		container: $('button-select-0'),
 		fileClass: File,
-		buttonImage: '/3-0/assets/button_select.black.png',
+		buttonImage: '../../assets/button_select.black.png',
 		width: 149,
 		height: 31,
 		params: {

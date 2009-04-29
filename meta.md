@@ -87,10 +87,18 @@ Documentation {#docs}
 * appendCookieData: (*boolean|string*: defaults to false) If this is not false, the cookies of the browser are merged into the given options *data*. If a string is given, it is used as key for the *data*. 
 * fileClass: (*class*: defaults to *Swiff.Uploader.File*) An instance of this class is created for every selected file.
 
+The options *url*, *method*, *data* and *mergeData* are also available in `Swiff.Uploader.File`.
+If you don't set them per-file, they default to the options in your `Swiff.Uploader` instance.
+To change them during runtime, simply use `setOptions` and it does all the magic for you.
+
 #### Events:
 
 * load - (*function*) Function to execute when the Flash movie is initialised.
-* fail - (*function*) Function to execute when the loading is prevented. First argument can be "blocked" when the user has to enable the movie manually because of Flashblock or "hidden" when Adblock Plus blocks hides the movie
+* fail - (*function*) Function to execute when the loading is prevented. First argument is the error type and can be:
+	* `flash`  - Flash is not installed or the Flash version did not meet the requirements.
+	* `blocked` - The user has to enable the movie manually because of Flashblock, no refresh required.
+	* `empty` - The Flash movie failed to load, check if the file exists and the `path` is correct.
+	* `hidden` - Adblock Plus blocks hides the movie, the user has enable it and refresh.
 * start - (*function*) Function to execute when the upload starts.
 * queue - (*function*) Function to execute when the queue statistics are updated.
 * complete - (*function*) Function to execute when all files are uploaded (or stopped).
@@ -120,15 +128,15 @@ Every Event starting with `file` is also called on the `Swiff.Uploader.File` cla
 
 #### Swiff.Uploader Method: start
 
-Starts the upload process.
+Starts the upload process. Also available in `Swiff.Uploader.File`.
 
 #### Swiff.Uploader Method: stop
 
-Stops all running files.
+Stops all running files. Also available in `Swiff.Uploader.File`.
 
 #### Swiff.Uploader Method: remove
 
-Remove all files from the list.
+Remove all files from the list. Also available in `Swiff.Uploader.File`.
 
 #### Swiff.Uploader Method: reposition
 

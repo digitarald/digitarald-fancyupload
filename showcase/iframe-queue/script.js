@@ -1,3 +1,10 @@
+/**
+ * FancyUpload Showcase
+ *
+ * @license		MIT License
+ * @author		Harald Kirschner <mail [at] digitarald [dot] de>
+ * @copyright	Authors
+ */
 
 window.addEvent('domready', function() {
 

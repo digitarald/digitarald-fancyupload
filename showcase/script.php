@@ -24,7 +24,9 @@
 // Request log
 
 /**
- * You don't need to log, this
+ * You don't need to log, this is just for the showcase. Better remove
+ * those lines for production since the log contains detailed file
+ * information.
  */
 
 $result = array();
@@ -98,7 +100,7 @@ if (!$error && ($size[0] < 25) || ($size[1] < 25))
  *
  * or
  *
- * $return['link'] = MyImageLibrary::createThumbnail($_FILES['Filedata']['tmp_name']);
+ * $return['link'] = YourImageLibrary::createThumbnail($_FILES['Filedata']['tmp_name']);
  *
  */
 
@@ -137,10 +139,13 @@ if ($error) {
  * Again, a demo case. We can switch here, for different showcases
  * between different formats. You can also return plain data, like an URL
  * or whatever you want.
+ *
+ * The Content-type headers are uncommented, since Flash doesn't care for them
+ * anyway. This way also the IFrame-based uploader sees the content.
  */
 
 if (isset($_REQUEST['response']) && $_REQUEST['response'] == 'xml') {
-	header('Content-type: text/xml');
+	// header('Content-type: text/xml');
 
 	// Really dirty, use DOM and CDATA section!
 	echo '<response>';
@@ -149,7 +154,7 @@ if (isset($_REQUEST['response']) && $_REQUEST['response'] == 'xml') {
 	}
 	echo '</response>';
 } else {
-	header('Content-type: application/json');
+	// header('Content-type: application/json');
 
 	echo json_encode($return);
 }

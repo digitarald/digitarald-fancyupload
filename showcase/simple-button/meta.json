@@ -1,7 +1,7 @@
 {
 	"title": "Simple Button",
 	"files": [
-		"/assets/mootools-1.2-core.js",
+		"http://ajax.googleapis.com/ajax/libs/mootools/1.2.2/mootools.js",
 		"../../source/Fx.ProgressBar.js",
 		"../../source/Swiff.Uploader.js"
 	]

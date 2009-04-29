@@ -1,3 +1,10 @@
+/**
+ * FancyUpload Showcase
+ *
+ * @license		MIT License
+ * @author		Harald Kirschner <mail [at] digitarald [dot] de>
+ * @copyright	Authors
+ */
 
 window.addEvent('domready', function() {
 
@@ -21,7 +28,7 @@ window.addEvent('domready', function() {
 	 * Uploader instance
 	 */
 	var swf = new Swiff.Uploader({
-		path: '/3-0/source/Swiff.Uploader.swf',
+		path: '../../source/Swiff.Uploader.swf',
 		url: '../script.php',
 		verbose: true,
 		queued: false,

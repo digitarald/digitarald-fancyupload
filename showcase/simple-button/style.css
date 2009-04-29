@@ -1,14 +1,6 @@
 /* Basic layout */
 
-h4 {
-	margin-top: 1.25em;
-}
-
-a {
-	padding: 1px;
-}
-
-a:hover, a.hover {
+a.hover {
 	color: red;
 }
 

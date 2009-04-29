@@ -83,8 +83,6 @@ Swiff.Uploader = new Class({
 	},
 
 	initialize: function(options) {
-		if (Browser.Plugins.Flash.version < 9) return false;
-
 		// protected events to control the class, added
 		// before setting options (which adds own events)
 		this.addEvent('load', this.initializeSwiff, true)
@@ -156,17 +154,21 @@ Swiff.Uploader = new Class({
 		
 		this.size = this.uploading = this.bytesLoaded = this.percentLoaded = 0;
 		
-		this.verifyLoad.delay(500, this);
-		
-		return this;
+		if (Browser.Plugins.Flash.version < 9) {
+			this.fireEvent('fail', ['flash']);
+		} else {
+			this.verifyLoad.delay(500, this);
+		}
 	},
 	
 	verifyLoad: function() {
 		if (this.loaded) return;
 		if (!this.object.parentNode) {
-			this.fireEvent('fail', ['blocked']);
-		} else if (!this.object.offsetHeight) {
+			this.fireEvent('fail', ['disabled']);
+		} else if (this.object.style.display == 'none') {
 			this.fireEvent('fail', ['hidden']);
+		} else if (!this.object.offsetWidth) {
+			this.fireEvent('fail', ['empty']);
 		}
 	},
 

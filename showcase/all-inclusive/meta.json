@@ -1,7 +1,7 @@
 {
-	"title": "All Inclusive, using the whole API",
+	"title": "All Inclusive",
 	"files": [
-		"/assets/mootools-1.2-core.js",
+		"http://ajax.googleapis.com/ajax/libs/mootools/1.2.2/mootools.js",
 		"../../source/Swiff.Uploader.js"
 	]
 }
