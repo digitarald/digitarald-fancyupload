@@ -10,15 +10,24 @@ window.addEvent('domready', function() { // wait for the content
 
 	// our uploader instance 
 	
-	var up = new FancyUpload2($('demo-status'), $('demo-list'), {
+	var up = new FancyUpload2($('demo-status'), $('demo-list'), { // options object
+		// we console.log infos, remove that in production!!
+		verbose: true,
+		
+		// url is read from the form, so you just have to change one place
 		url: $('form-demo').action,
+		
+		// path to the SWF file
 		path: '../../source/Swiff.Uploader.swf',
+		
 		// remove that line to select all files, or edit it, add more items
 		typeFilter: {
 			'Images (*.jpg, *.jpeg, *.gif, *.png)': '*.jpg; *.jpeg; *.gif; *.png'
 		},
-		verbose: true,
+		
+		// this is our browse button, *target* is overlayed with the Flash movie
 		target: 'demo-browse',
+		
 		// graceful degradation, onLoad is only called if all went well with Flash
 		onLoad: function() {
 			$('demo-status').removeClass('hide'); // we show the actual UI
@@ -83,14 +92,14 @@ window.addEvent('domready', function() { // wait for the content
 		 * to send something else than JSON or different items).
 		 */
 		onFileSuccess: function(file, response) {
-			var json = $H(JSON.decode(response, true) || {});
+			var json = new Hash(JSON.decode(response, true) || {});
 			
 			if (json.get('status') == '1') {
 				file.element.addClass('file-success');
-				file.info.set('html', json.get('width') + ' x ' + json.get('height') + 'px ' + json.get('mime'));
+				file.info.set('html', 'Image was uploaded (' + json.get('width') + ' x ' + json.get('height') + 'px, <em>' + json.get('mime') + '</em>)');
 			} else {
 				file.element.addClass('file-failed');
-				file.info.set('html', json.get('error') || response);
+				file.info.set('html', 'An error occured ' + (json.get('error') ? (json.get('error') + ' #' + json.get('code')) : response));
 			}
 		},
 		

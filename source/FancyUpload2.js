@@ -199,10 +199,9 @@ FancyUpload2.File = new Class({
 
 		var error = MooTools.lang.get('FancyUpload', 'fileError').substitute(this);
 		
-		var info = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || (this.response.error + ' #' + this.response.code);
-		info = info.substitute(this).substitute(this.response);
-				
-		this.info.set('html', '<strong>' + error + ':</strong> ' + info);
+		var info = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || ('{error} #{code}');
+		
+		this.info.set('html', '<strong>' + error + ':</strong> ' + info.substitute(this).substitute(this.response));
 	},
 
 	onRemove: function() {
@@ -230,7 +229,7 @@ FancyUpload2.File = new Class({
 			'fileListSizeMax': 'File <em>{name}</em> is too big, overall filesize exceeded limit.'
 		},
 		'errors': {
-			'httpError': 'Server returned HTTP-Status #{code}',
+			'httpStatus': 'Server returned HTTP-Status #{code}',
 			'securityError': 'Security error occured ({text})',
 			'ioError': 'Error caused a send or load operation to fail ({text})'
 		}

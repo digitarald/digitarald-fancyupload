@@ -1,7 +1,7 @@
 Previous Version {#big-important-note}
 -------------------
 
-If you missed the link above, the previous FancyUpload for [MooTools 1.11](http://mootools.net) is still [available](/project/fancyupload/1-0/) including example code and minor updates.
+If you missed the link above, the previous FancyUpload for [MooTools 1.11](http://mootools.net) is still [available](/project/fancyupload/1-0/) including example code and minor updates. It is not maintained anymore.
 
 Features {#features}
 -------------------
@@ -269,8 +269,8 @@ Complete ActionScript/JavaScript source, documentation and showcases are availab
 
 ### Packages
 
-* [**Working FancyUpload Installation**]() - The package that everybody waited for, a working FancyUpload to unpack and start play.
-* [**Sources including Showcases**]() - The source and all showcases from this page in one package, the package for *web craftsmen* ;).
+* [**Working FancyUpload Installation**](http://cloud.github.com/downloads/digitarald/digitarald-fancyupload/working-fancyupload-photoqueue.rar) - The package that everybody waited for, a working FancyUpload to unpack and start play.
+* [**Sources including Showcases**](http://cloud.github.com/downloads/digitarald/digitarald-fancyupload/fancyupload-complete-source.rar) - The source and all showcases from this page in one package, the package for *web craftsmen* ;).
 
 ### Single Files
 
