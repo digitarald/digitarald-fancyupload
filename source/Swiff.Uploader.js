@@ -1,7 +1,7 @@
 /**
  * Swiff.Uploader - Flash FileReference Control
  *
- * @version		1.3
+ * @version		3.0 rc0
  *
  * @license		MIT License
  *
