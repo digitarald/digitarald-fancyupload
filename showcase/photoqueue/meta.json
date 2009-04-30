@@ -6,7 +6,7 @@
 		"http://ajax.googleapis.com/ajax/libs/mootools/1.2.2/mootools.js",
 		"../../source/Swiff.Uploader.js",
 		"../../source/Fx.ProgressBar.js",
-		"../../source/FancyUpload2.js",
-		"http://github.com/mootools/mootools-more/raw/master/Source/Core/Lang.js"
+		"http://github.com/mootools/mootools-more/raw/master/Source/Core/Lang.js",
+		"../../source/FancyUpload2.js"
 	]
 }

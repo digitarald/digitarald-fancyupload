@@ -236,11 +236,14 @@ FancyUpload2.File = new Class({
 		}
 	};
 	
-	if (MooTools.lang) MooTools.lang.set('en-US', 'FancyUpload', phrases);	
-	else MooTools.lang = {
-		get: function(from, key) {
-			console.log(key);
-			return phrases[key];
-		}
-	};
+	if (MooTools.lang) {
+		MooTools.lang.set('en-US', 'FancyUpload', phrases);
+	} else {
+		MooTools.lang = {
+			get: function(from, key) {
+				console.log(key);
+				return phrases[key];
+			}
+		};
+	}
 })();

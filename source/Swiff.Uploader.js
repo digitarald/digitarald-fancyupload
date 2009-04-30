@@ -400,7 +400,7 @@ Swiff.Uploader.qualifyPath = (function() {
 	return function(path) {
 		(anchor || (anchor = new Element('a'))).href = path;
 		return anchor.href;
-	}
+	};
 
 })();
 

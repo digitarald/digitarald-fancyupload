@@ -1,18 +1,20 @@
-What happens?
-----------------
+### What happens?
 
-Check the automated [**log**](../script.log) file after upload. The PHP script does not save the files but logs every request.
+The PHP script does not save the files but [logs](../script.log) every request. Check the Firebug console for event debugging logs.
 
-Check the Firebug console for event debugging logs. *Filesize is limited to 2Mb (client- and serverside).*
+1. Select one or more images.
+2. The images are uploaded one by one, overall progress and file progress is updated.
+3. The server-side [PHP script](../script.php) logs the upload (**see [.log](../script.log)**).
+4. A JSON response is returned, containing some information about the images like `mime-type`, width and height.
+5. This information is added to the completed file element. We would link the uploaded image, but we don't save any files in this showcase.
 
-### Do Not:
+#### Do Not:
 
- * ... copy this example and ask why it doesn't upload the files. It only logs the uploaded images!
- * ... copy this example without changing the XHTML, the CSS or the images!
- * ... skip all validation on the server and blindly move the files!
+ * Copy this example and ask why it doesn't upload the files. It only logs the uploaded images!
+ * Copy this example without changing the XHTML, the CSS or the images!
+ * Skip all validation on the server and blindly move the files!
  
-### Please Do:
+#### Please Do:
 
- * ... take this showcase as a code example about processing and validating the uploaded file and create your own server code.
- * ... adapt the XHTML, the CSS and the images to your needs.
- * ... edit the provided [source](https://github.com/digitarald/digitarald-fancyupload) to fit your needs and [submit patches](/contact/) to the author
+ * Take this showcase as a code example about processing and validating the uploaded file and create your own server code.
+ * Adapt the XHTML, the CSS and the images to your needs and share them.
