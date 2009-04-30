@@ -35,8 +35,8 @@ window.addEvent('domready', function() {
 
 			this.addEvents({
 				'start': this.onStart,
-				'remove': this.onRemove,
 				'stop': this.onStop,
+				'remove': this.onRemove,
 				'complete': this.onComplete
 			});
 
@@ -68,9 +68,12 @@ window.addEvent('domready', function() {
 		},
 
 		onStop: function() {
+			this.remove();
+		},
+		
+		onRemove: function() {
 			// stop removes the file entry
 			this.ui = this.ui.element.destroy();
-			this.remove();
 		},
 
 		onComplete: function() {

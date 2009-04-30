@@ -8,12 +8,12 @@
 
 window.addEvent('domready', function() {
 
+	// One Roar instance for our notofications, positioned in the top-right corner of our demo.
 	var log = new Roar({
 		container: $('demo'),
 		position: 'topRight',
 		duration: 5000
 	});
-	
 	
 	var link = $('select-0');
 	var linkIdle = link.get('html');
@@ -24,9 +24,7 @@ window.addEvent('domready', function() {
 		link.set('html', '<span class="small">' + swf.percentLoaded + '% of ' + size + '</span>');
 	}
 
-	/**
-	 * Uploader instance
-	 */
+	// Uploader instance
 	var swf = new Swiff.Uploader({
 		path: '../../source/Swiff.Uploader.swf',
 		url: '../script.php',
@@ -41,14 +39,16 @@ window.addEvent('domready', function() {
 		fileSizeMax: 2 * 1024 * 1024,
 		onSelectSuccess: function(files) {
 			if (Browser.Platform.linux) window.alert('Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nSince you are prepared now, the upload will start right away ...');
-			this.setEnabled(false);
 			log.alert('Starting Upload', 'Uploading <em>' + files[0].name + '</em> (' + Swiff.Uploader.formatUnit(files[0].size, 'b') + ')');
+			this.setEnabled(false);
 		},
 		onSelectFail: function(files) {
 			log.alert('<em>' + files[0].name + '</em> was not added!', 'Please select an image smaller than 2 Mb. (Error: #' + files[0].validationError + ')');
 		},
+		appendCookieData: true,
 		onQueue: linkUpdate,
 		onFileComplete: function(file) {
+			
 			// We *don't* save the uploaded images, we only take the md5 value and create a monsterid ;)
 			if (file.response.error) {
 				log.alert('Failed Upload', 'Uploading <em>' + this.fileList[0].name + '</em> failed, please try again. (Error: #' + this.fileList[0].response.code + ' ' + this.fileList[0].response.error + ')');
@@ -70,9 +70,7 @@ window.addEvent('domready', function() {
 		}
 	});
 
-	/**
-	 * Button state
-	 */
+	// Button state
 	link.addEvents({
 		click: function() {
 			return false;

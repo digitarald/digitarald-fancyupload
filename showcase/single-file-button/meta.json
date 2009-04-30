@@ -1,5 +1,7 @@
 {
 	"title": "Single File Button",
+	"description": "A simple implementation of the Swiff.Uploader class",
+	"script_php": "../script.php",
 	"files": [
 		"http://ajax.googleapis.com/ajax/libs/mootools/1.2.2/mootools.js",
 		"../../source/Fx.ProgressBar.js",

@@ -22,9 +22,10 @@ Features {#features}
   * Set the filename for the upload request
 * New in 3.0 (Completely rewritten API)
 	* Fully Flash 9 and 10 compatible and an additional IFrame-based uploader
-	* Browse-button can be an invisible overlay or an image sprite (for the different states)
-	* Event based Flash communication, future-proof und more stable 
-	* File-specific options for setting url, data, method
+	* Browse-button can be an invisible overlay or an interactive image sprite
+	* Event based Flash communication, future-proof und more stable
+	* File-specific options for setting url, data and method, intelligently merged
+	* Append cookies automatically to the request data
 	* Relative URLs are converted automatically
 
 
@@ -59,7 +60,7 @@ Documentation {#docs}
 
 ### Returns:
 
-* (*object|false*) - New Swiff.Uploader instance or false if detected Flash version is smaller than 9.
+* (*object|false*) - New Swiff.Uploader instance.
 
 #### Options:
 
@@ -178,7 +179,13 @@ The overall loaded percentage of running and completed files in the list.
 
 The overall rate of running files in the list in *bytes/second*.
 
-FAQ: Tips, Tricks, Quirks {#faq}
+### Class: Swiff.Uploader.File
+
+Mirrors several methods and events from the documentation above. Custom
+file classes usually extends it and are given to `Swiff.Uploader` via the
+*fileClass* option.
+
+FAQ, Tips, Tricks, Quirks {#faq}
 -------------------
 
 How do I access the uploaded files?
@@ -194,7 +201,7 @@ How do I access the uploaded files?
 
 Flash-request forgets cookies and session ID
 
-:	Flash FileReference is not an intelligent upload class, the request will not have the browser cookies, Flash saves his own cookies. When you have sessions, append them as get-data to the the URL (e.g. "upload.php?SESSID=123456789abcdef"). Of course your session-name can be different.
+:	See option `appendCookieData`. Flash FileReference is not an intelligent upload class, the request will not have the browser cookies, Flash saves his own cookies. When you have sessions, append them as get-data to the the URL (e.g. "upload.php?SESSID=123456789abcdef"). Of course your session-name can be different.
 
 Are cross-domain uploads possible?
 
@@ -235,31 +242,47 @@ Uploads and Basic Authentication
 Requirements {#requirements}
 -------------------
 
-*It does not depend on any server-side architecture or language.*
+**It does not depend on any server-side architecture or language.**
 
 ### MooTools JavaScript Framework 1.2
 
-[__Download MooTools 1.2__](http://mootools.net/core).
+You can include MooTools via [Google AJAX Libraries API](http://code.google.com/apis/ajaxlibs/documentation/#mootools),
+follow the link for more information and why it can be good for your site.
+
+#### [Required MooTools Core components](http://mootools.net/core/):
 
 - Element.Events
+- Element.Dimensions
 - Fx.Tween
 - Fx.Transitions 
 - Selectors
-- Json
+- JSON
 - Swiff
-- _DomReady (facultative)_
+- DomReady (_facultative_)
 
 **Don't use compressed code during development to simplify debugging.**
 
 Download {#download}
 -------------------
 
-* [FancyUpload2.js](source/FancyUpload2.js)
-* [Swiff.Uploader.js](source/Swiff.Uploader.js)
-* [Fx.ProgressBar.js](source/Fx.ProgressBar.js "Will get his own project page later")
-* [Swiff.Uploader.swf](source/Swiff.Uploader.swf "It is a hidden, 1px movie and only contains ActionScript!") (*Use right-click/save-as!*)
-* Complete ActionScript/JavaScript source, documentation and showcases are available at [github](http://github.com/): [digitarald-fancyupload repository](https://github.com/digitarald/digitarald-fancyupload)
-	* The [images](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets) from the [showcases](/project/fancyupload/2-0/showcase/photoqueue/) are also [downloadable](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets).
+Complete ActionScript/JavaScript source, documentation and showcases are available at [github](http://github.com/), in my [fancyupload repository](https://github.com/digitarald/digitarald-fancyupload).
+
+### Packages
+
+* [**Working FancyUpload Installation**]() - The package that everybody waited for, a working FancyUpload to unpack and start play.
+* [**Sources including Showcases**]() - The source and all showcases from this page in one package, the package for *web craftsmen* ;).
+
+### Single Files
+
+* [Swiff.Uploader.js](source/Swiff.Uploader.js) - Flash based uploader, energizer for all possible upload interfaces
+* [Swiff.Uploader.swf](source/Swiff.Uploader.swf) - The movie used by the uploader class. *Use right-click/save-as!*
+* [FancyUpload2.js](source/FancyUpload2.js) - The famous & fancy interface, converted to the new 3.0 API.
+* [Uploader.js](source/Swiff.Uploader.js) - IFrame based class with the same API, but without progress.
+* [Fx.ProgressBar.js](source/Fx.ProgressBar.js) - Class to create and animate progress-bars.
+
+* The [images](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets) from the [showcases](#showcases) are also [downloadable](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets).
+
+**You** can contribute by reporting problems and bugs in the [issue tracker](http://github.com/digitarald/digitarald-fancyupload/issues) on github or in the [support forum](/forums/) to discuss it.
 
 References {#references}
 -------------------

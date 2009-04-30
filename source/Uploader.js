@@ -279,8 +279,6 @@ Uploader.File = new Class({
 			document: doc,
 			text: doc.innerHTML || ''
 		};
-		
-		console.log(doc.childNodes);
 
 		this.base.uploading--;
 		this.dates.complete = new Date();
@@ -362,9 +360,9 @@ Uploader.File = new Class({
 			this.base.uploading--;
 			this.base.start();
 			if (!soft) {
-		  	this.iframe.contentWindow.history.back();
-		  	this.fireEvent('stop');
-		  }
+				this.iframe.contentWindow.history.back();
+				this.fireEvent('stop');
+			}
 		}
 		return this;
 	},

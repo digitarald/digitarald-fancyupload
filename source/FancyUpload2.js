@@ -205,25 +205,30 @@ FancyUpload2.File = new Class({
 	
 });
 
-MooTools.lang.set('en-US', 'FancyUpload', {
-	'progressOverall': 'Overall Progress ({total})',
-	'currentTitle': 'File Progress',
-	'currentFile': 'Uploading "{name}"',
-	'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
-	'fileName': '{name}',
-	'remove': 'Remove',
-	'removeTitle': 'Click to remove this entry.',
-	'fileError': 'File was not uploaded',
-	'validationErrors': {
-		'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
-		'sizeLimitMin': 'File <em>{name}</em> is too small, please check the minimal file size.',
-		'sizeLimitMax': 'File <em>{name}</em> is too big, please check the maximal file size.',
-		'fileListMax': 'File <em>{name}</em> could not be added, amount of files exceeded limit.',
-		'fileListSizeMax': 'File <em>{name}</em> is too big, overall filesize exceeded limit.'
-	},
-	'errors': {
-		'httpError': 'Server returned HTTP-Status #{code}',
-		'securityError': 'Security error occured ({text})',
-		'ioError': 'Error caused a send or load operation to fail ({text})'
-	}
-});
+(function() {
+	var phrases = {
+		'progressOverall': 'Overall Progress ({total})',
+		'currentTitle': 'File Progress',
+		'currentFile': 'Uploading "{name}"',
+		'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
+		'fileName': '{name}',
+		'remove': 'Remove',
+		'removeTitle': 'Click to remove this entry.',
+		'fileError': 'File was not uploaded',
+		'validationErrors': {
+			'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
+			'sizeLimitMin': 'File <em>{name}</em> is too small, please check the minimal file size.',
+			'sizeLimitMax': 'File <em>{name}</em> is too big, please check the maximal file size.',
+			'fileListMax': 'File <em>{name}</em> could not be added, amount of files exceeded limit.',
+			'fileListSizeMax': 'File <em>{name}</em> is too big, overall filesize exceeded limit.'
+		},
+		'errors': {
+			'httpError': 'Server returned HTTP-Status #{code}',
+			'securityError': 'Security error occured ({text})',
+			'ioError': 'Error caused a send or load operation to fail ({text})'
+		}
+	};
+	
+	if (MooTools.lang) MooTools.lang.set('en-US', 'FancyUpload', phrases);	
+	else MooTools.lang = new Hash({'FancyUpload': phrases});
+})();
