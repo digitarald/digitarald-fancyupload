@@ -279,7 +279,6 @@ Complete ActionScript/JavaScript source, documentation and showcases are availab
 * [FancyUpload2.js](source/FancyUpload2.js) - The famous & fancy interface, converted to the new 3.0 API.
 * [Uploader.js](source/Swiff.Uploader.js) - IFrame based class with the same API, but without progress.
 * [Fx.ProgressBar.js](source/Fx.ProgressBar.js) - Class to create and animate progress-bars.
-
 * The [images](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets) from the [showcases](#showcases) are also [downloadable](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets).
 
 **You** can contribute by reporting problems and bugs in the [issue tracker](http://github.com/digitarald/digitarald-fancyupload/issues) on github or in the [support forum](/forums/) to discuss it.
