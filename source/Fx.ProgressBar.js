@@ -17,7 +17,7 @@ Fx.ProgressBar = new Class({
 		text: null,
 		url: null,
 		transition: Fx.Transitions.Circ.easeOut,
-		fit: false,
+		fit: true,
 		link: 'cancel'
 	},
 
@@ -33,7 +33,6 @@ Fx.ProgressBar = new Class({
 			});
 		}
 		
-		// experimental
 		if (this.options.fit) {
 			url = url || this.element.getStyle('background-image').replace(/^url\(["']?|["']?\)$/g, '');
 			if (url) {

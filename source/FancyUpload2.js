@@ -1,5 +1,7 @@
 /**
  * FancyUpload - Flash meets Ajax for powerful and elegant uploads.
+ * 
+ * Updated to latest 3.0 API. Hopefully 100% compat!
  *
  * @version		3.0-rc0
  *
@@ -55,6 +57,10 @@ var FancyUpload2 = new Class({
 		this.currentProgress = new Fx.ProgressBar(progress, {
 			text: new Element('span', {'class': 'progress-text'}).inject(progress, 'after')
 		});
+		
+		progress.addEvent('click', function() {
+			this.currentProgress.start($random(0, 100));
+		}.bind(this));
 		
 		this.updateOverall();
 	},
@@ -205,6 +211,7 @@ FancyUpload2.File = new Class({
 	
 });
 
+// Avoiding MooTools.lang depedency
 (function() {
 	var phrases = {
 		'progressOverall': 'Overall Progress ({total})',
@@ -230,5 +237,10 @@ FancyUpload2.File = new Class({
 	};
 	
 	if (MooTools.lang) MooTools.lang.set('en-US', 'FancyUpload', phrases);	
-	else MooTools.lang = new Hash({'FancyUpload': phrases});
+	else MooTools.lang = {
+		get: function(from, key) {
+			console.log(key);
+			return phrases[key];
+		}
+	};
 })();
