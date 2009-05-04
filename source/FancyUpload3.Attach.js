@@ -23,7 +23,12 @@ FancyUpload3.Attach = new Class({
 	initialize: function(list, selects, options) {
 		this.list = $(list);
 		this.selects = $(selects) ? $$($(selects)) : $$(selects);
+				
+		options.target = this.selects[0];
+		options.fileClass = options.fileClass || FancyUpload3.Attach.File;
 		
+		this.parent(options);
+
 		/**
 		 * Button state
 		 */
@@ -53,11 +58,6 @@ FancyUpload3.Attach = new Class({
 				'fileRemove': this.onFileRemove
 			});
 		}
-		
-		options.target = this.selects[0];
-		options.fileClass = options.fileClass || FancyUpload3.Attach.File;
-		
-		this.parent(options);
 	},
 	
 	onSelectSuccess: function() {
@@ -71,8 +71,8 @@ FancyUpload3.Attach = new Class({
 	
 	onFileRemove: function() {
 		if (this.fileList.length == 0) {
-			select.setStyle('display', 'inline');
-			selectMore.setStyle('display', 'none');
+			this.selects[0].setStyle('display', 'inline');
+			this.selects[1].setStyle('display', 'none');
 			this.target = this.selects[0];
 			this.reposition();
 		}
@@ -147,6 +147,7 @@ FancyUpload3.Attach.File = new Class({
 
 	onOpen: function() {
 		this.ui.element.addClass('file-uploading');
+		if (this.ui.progress) this.ui.progress.set(0);
 	},
 
 	onRemove: function() {

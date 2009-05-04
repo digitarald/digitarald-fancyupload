@@ -87,7 +87,10 @@ Swiff.Uploader = new Class({
 		// before setting options (which adds own events)
 		this.addEvent('load', this.initializeSwiff, true)
 			.addEvent('select', this.processFiles, true)
-			.addEvent('complete', this.update, true);
+			.addEvent('complete', this.update, true)
+			.addEvent('fileRemove', function(file) {
+				this.fileList.erase(file);
+			}.bind(this), true);
 
 		this.setOptions(options);
 
@@ -179,16 +182,15 @@ Swiff.Uploader = new Class({
 			var data = args[0];
 			
 			var file = this.findFile(data.id);
+			this.fireEvent(name, file || data, 5);
 			if (file) {
 				var fire = name.replace(/^file([A-Z])/, function($0, $1) {
 					return $1.toLowerCase();
 				});
 				file.update(data).fireEvent(fire, [data], 10);
 			}
-			
-			this.fireEvent(name, file || data, 10);
 		} else {
-			this.fireEvent(name, args, 10);
+			this.fireEvent(name, args, 5);
 		}
 	},
 
@@ -411,9 +413,6 @@ Swiff.Uploader.File = new Class({
 	initialize: function(base, data) {
 		this.base = base;
 		this.update(data);
-		this.addEvent('remove', function() {
-			this.base.fileList.erase(this);
-		}.bind(this));
 	},
 
 	update: function(data) {

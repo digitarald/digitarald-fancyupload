@@ -39,7 +39,7 @@ window.addEvent('domready', function() {
 		},
 		
 		onFileError: function(file) {
-			this.ui.cancel.set('html', 'Retry').removeEvents().addEvent('click', function() {
+			file.ui.cancel.set('html', 'Retry').removeEvents().addEvent('click', function() {
 				file.requeue();
 				return false;
 			});
@@ -47,16 +47,18 @@ window.addEvent('domready', function() {
 			new Element('span', {
 				html: file.errorMessage,
 				'class': 'file-error'
-			}).inject(file.ui.size, 'after');
+			}).inject(file.ui.cancel, 'after');
 		},
 		
 		onFileRequeue: function(file) {
-			this.ui.cancel.set('html', 'Cancel').removeEvents().addEvent('click', function() {
+			file.ui.element.getElement('.file-error').destroy();
+			
+			file.ui.cancel.set('html', 'Cancel').removeEvents().addEvent('click', function() {
 				file.remove();
 				return false;
 			});
 			
-			this.ui.element.getElement('file-error').destroy();
+			this.start();
 		}
 		
 	});
