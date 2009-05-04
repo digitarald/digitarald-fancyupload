@@ -194,7 +194,7 @@ FancyUpload2.File = new Class({
 		if (this.response.error) {
 			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
 			this.errorMessage = msg.substitute($extend({
-				name: this.name
+				name: this.name,
 				size: Swiff.Uploader.formatUnit(this.size, 'b')
 			}, this.response));
 			var args = [this, this.errorMessage, this.response];
