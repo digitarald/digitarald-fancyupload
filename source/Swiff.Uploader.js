@@ -149,7 +149,6 @@ Swiff.Uploader = new Class({
 
 		this.inject(this.box);
 
-		this.fileListSize = 0;
 		this.fileList = [];
 		
 		this.size = this.uploading = this.bytesLoaded = this.percentLoaded = 0;
@@ -238,10 +237,11 @@ Swiff.Uploader = new Class({
 
 	reposition: function(coords) {
 		// update coordinates, manual or automatically
-		this.box.setStyles(coords || (this.target && this.target.offsetHeight)
+		coords = coords || (this.target && this.target.offsetHeight)
 			? this.target.getCoordinates(this.box.getOffsetParent())
 			: {top: window.getScrollTop(), left: 0, width: 40, height: 40}
-		);
+		this.box.setStyles(coords);
+		this.fireEvent('reposition', [coords, this.box, this.target]);
 	},
 
 	setOptions: function(options) {
@@ -317,7 +317,7 @@ Swiff.Uploader = new Class({
 					ret.remove.delay(10, ret);
 					fail.push(ret);
 				} else {
-					this.fileListSize += data.size;
+					this.size += data.size;
 					this.fileList.push(ret);
 					success.push(ret);
 					ret.render();
@@ -411,7 +411,9 @@ Swiff.Uploader.File = new Class({
 	initialize: function(base, data) {
 		this.base = base;
 		this.update(data);
-		this.addEvent('remove', this.onRemove, true);
+		this.addEvent('remove', function() {
+			this.base.fileList.erase(this);
+		}.bind(this));
 	},
 
 	update: function(data) {
@@ -426,7 +428,7 @@ Swiff.Uploader.File = new Class({
 			return false;
 		}
 		
-		if (options.fileListSizeMax && (this.base.fileListSize + this.size) > options.fileListSizeMax) {
+		if (options.fileListSizeMax && (this.base.size + this.size) > options.fileListSizeMax) {
 			this.validationError = 'fileListSizeMax';
 			return false;
 		}
@@ -470,11 +472,6 @@ Swiff.Uploader.File = new Class({
 
 	requeue: function() {
 		this.base.fileRequeue(this);
-	},
-
-	onRemove: function() {
-		this.base.fileListSize -= this.size;
-		this.base.fileList.erase(this);
-	}
+	} 
 
 });

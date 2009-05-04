@@ -1,49 +1,43 @@
-/* Basic layout */
-
-h4 {
-	margin-top: 1.25em;
-}
-
-a {
-	padding: 1px;
-}
-
-a:hover, a.hover {
+a.hover {
 	color: red;
 }
 
-.error {
-	cursor: pointer;
-}
-
-#select-more-0 {
-	display: none;
-}
-
-.file-list {
+#demo-list {
 	padding: 0;
 	list-style: none;
 	margin: 0;
 }
 
-.file {
+#demo-list .file-invalid {
+	cursor: pointer;
+	color: #8a1f11;
 	line-height: 2em;
-	padding-left: 21px;
-	background: url(http://iconfinder.net/data/icons/fam_fam_fam_pack/attach.png) no-repeat 1px 50%;
+	padding-left: 48px;
+	background: #f5f5f5 url(assets/error.png) no-repeat 24px 50%;
 }
 
-.file span {
-	padding: 0 5px 0 0;
+#demo-list .file {
+	line-height: 2em;
+	padding-left: 22px;
+	background: url(assets/attach.png) no-repeat 1px 50%;
 }
-.file a {
+
+#demo-list .file span {
+	padding: 0 0 0 5px;
+}
+#demo-list .file a {
 	padding: 0 0 0 5px;
 }
 
-.file .file-size {
+#demo-list .file .file-size {
 	color: #666;
 }
 
-.file .file-progress {
+#demo-list .file .file-error {
+	color: #8a1f11;
+}
+
+#demo-list .file .file-progress {
 	width: 125px;
 	height: 12px;
 	vertical-align: middle;

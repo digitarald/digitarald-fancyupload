@@ -28,9 +28,9 @@ var FancyUpload2 = new Class({
 		this.list = $(list);
 
 		// compat
-		if (!options.fileClass) options.fileClass = FancyUpload2.File;
-		if (options.limitSize) options.fileSizeMax = options.limitSize;
-		if (options.limitFiles) options.fileListMax = options.limitFiles;
+		options.fileClass = options.fileClass || FancyUpload2.File;
+		options.fileSizeMax = options.limitSize || options.fileSizeMax;
+		options.fileListMax = options.limitFiles || options.fileListMax;
 
 		this.parent(options);
 
@@ -124,7 +124,14 @@ FancyUpload2.File = new Class({
 		if (this.invalid) {
 			if (this.validationError) {
 				var msg = MooTools.lang.get('FancyUpload', 'validationErrors')[this.validationError] || this.validationError;
-				this.validationErrorMessage = msg.substitute(this);
+				this.validationErrorMessage = msg.substitute({
+					name: this.name,
+					size: Swiff.Uploader.formatUnit(this.size, 'b'),
+					fileSizeMin: Swiff.Uploader.formatUnit(this.base.options.fileSizeMin || 0, 'b'),
+					fileSizeMax: Swiff.Uploader.formatUnit(this.base.options.fileSizeMax || 0, 'b'),
+					fileListMax: this.base.options.fileListMax || 0,
+					fileListSizeMax: Swiff.Uploader.formatUnit(this.base.options.fileListSizeMax || 0, 'b')
+				});
 			}
 			this.remove();
 			return;
@@ -137,6 +144,8 @@ FancyUpload2.File = new Class({
 			'error': this.onError,
 			'remove': this.onRemove
 		});
+		
+		var self = this;
 		
 		this.info = new Element('span', {'class': 'file-info'});
 		this.element = new Element('li', {'class': 'file'}).adopt(
@@ -185,32 +194,30 @@ FancyUpload2.File = new Class({
 		this.base.currentProgress.start(100);
 		
 		if (this.response.error) {
-			this.fireEvent('error');
-			return;
+			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
+			this.errorMessage = msg.substitute($extend({name: this.name}, this.response));
+			var args = [this, this.errorMessage, this.response];
+			
+			this.fireEvent('error', args).base.fireEvent('fileError', args);
+		} else {
+			this.base.fireEvent('fileSuccess', [this, this.response.text || '']);
 		}
-		
-		var response = this.response.text || '';
-		
-		this.base.fireEvent('onFileSuccess', [this, response]);
 	},
 
 	onError: function() {
 		this.element.addClass('file-failed');
-
 		var error = MooTools.lang.get('FancyUpload', 'fileError').substitute(this);
-		
-		var info = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || ('{error} #{code}');
-		
-		this.info.set('html', '<strong>' + error + ':</strong> ' + info.substitute(this).substitute(this.response));
+		this.info.set('html', '<strong>' + error + ':</strong> ' + this.errorMessage);
 	},
 
 	onRemove: function() {
+		this.element.getElements('a').setStyle('visibility', 'hidden');
 		this.element.fade('out').retrieve('tween').chain(Element.destroy.bind(Element, this.element));
 	}
 	
 });
 
-// Avoiding MooTools.lang depedency
+// Avoiding MooTools.lang dependency
 (function() {
 	var phrases = {
 		'progressOverall': 'Overall Progress ({total})',
@@ -220,16 +227,16 @@ FancyUpload2.File = new Class({
 		'fileName': '{name}',
 		'remove': 'Remove',
 		'removeTitle': 'Click to remove this entry.',
-		'fileError': 'File was not uploaded',
+		'fileError': 'Upload failed',
 		'validationErrors': {
 			'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
-			'sizeLimitMin': 'File <em>{name}</em> is too small, please check the minimal file size.',
-			'sizeLimitMax': 'File <em>{name}</em> is too big, please check the maximal file size.',
-			'fileListMax': 'File <em>{name}</em> could not be added, amount of files exceeded limit.',
-			'fileListSizeMax': 'File <em>{name}</em> is too big, overall filesize exceeded limit.'
+			'sizeLimitMin': 'File <em>{name}</em> (<em>{size}</em>) is too small, the minimal file size is {fileSizeMin}.',
+			'sizeLimitMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, the maximal file size is <em>{fileSizeMax}</em>.',
+			'fileListMax': 'File <em>{name}</em> could not be added, amount of <em>{fileListMax} files</em> exceeded.',
+			'fileListSizeMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, overall filesize of <em>{fileListSizeMax}</em> exceeded.'
 		},
 		'errors': {
-			'httpStatus': 'Server returned HTTP-Status #{code}',
+			'httpStatus': 'Server returned HTTP-Status <code>#{code}</code>',
 			'securityError': 'Security error occured ({text})',
 			'ioError': 'Error caused a send or load operation to fail ({text})'
 		}
@@ -240,7 +247,6 @@ FancyUpload2.File = new Class({
 	} else {
 		MooTools.lang = {
 			get: function(from, key) {
-				console.log(key);
 				return phrases[key];
 			}
 		};
