@@ -145,8 +145,6 @@ FancyUpload2.File = new Class({
 			'remove': this.onRemove
 		});
 		
-		var self = this;
-		
 		this.info = new Element('span', {'class': 'file-info'});
 		this.element = new Element('li', {'class': 'file'}).adopt(
 			new Element('span', {'class': 'file-size', 'html': Swiff.Uploader.formatUnit(this.size, 'b')}),
@@ -195,7 +193,10 @@ FancyUpload2.File = new Class({
 		
 		if (this.response.error) {
 			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
-			this.errorMessage = msg.substitute($extend({name: this.name}, this.response));
+			this.errorMessage = msg.substitute($extend({
+				name: this.name
+				size: Swiff.Uploader.formatUnit(this.size, 'b')
+			}, this.response));
 			var args = [this, this.errorMessage, this.response];
 			
 			this.fireEvent('error', args).base.fireEvent('fileError', args);
