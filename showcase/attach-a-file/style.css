@@ -10,10 +10,15 @@ a.hover {
 
 #demo-list .file-invalid {
 	cursor: pointer;
-	color: #8a1f11;
-	line-height: 2em;
+	color: #514721;
 	padding-left: 48px;
-	background: #f5f5f5 url(assets/error.png) no-repeat 24px 50%;
+	line-height: 24px;
+	background: url(assets/error.png) no-repeat 24px 5px;
+	margin-bottom: 1px;
+}
+#demo-list .file-invalid span {
+	background-color: #fff6bf;
+	padding: 1px;
 }
 
 #demo-list .file {
@@ -22,11 +27,9 @@ a.hover {
 	background: url(assets/attach.png) no-repeat 1px 50%;
 }
 
-#demo-list .file span {
-	padding: 0 0 0 5px;
-}
+#demo-list .file span,
 #demo-list .file a {
-	padding: 0 0 0 5px;
+	padding: 0 4px;
 }
 
 #demo-list .file .file-size {

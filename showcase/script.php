@@ -53,12 +53,13 @@ if (count($_FILES)) {
 	$result['files'] = $_FILES;
 }
 
+// we kill an old file to keep the size small
+if (file_exists('script.log') && filesize('script.log') > 102400) {
+	unlink('script.log');
+}
+
 $log = @fopen('script.log', 'a');
 if ($log) {
-	// we kill an old file to keep the size small
-	if (file_exists($result) && date('Y-m-d-H', filemtime($result)) != date('Y-m-d-H')) {
-		unlink($result);
-	}
 	fputs($log, print_r($result, true) . "\n---\n");
 	fclose($log);
 }

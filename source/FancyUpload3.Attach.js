@@ -135,12 +135,10 @@ FancyUpload3.Attach.File = new Class({
 			this.ui.cancel
 		).inject(this.base.list).highlight();
 		
-		if (this.base.progressable) {
-			var progress = new Element('img', {'class': 'file-progress', src: '../../assets/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
-			this.ui.progress = new Fx.ProgressBar(progress, {
-				fit: true
-			}).set(0);
-		}
+		var progress = new Element('img', {'class': 'file-progress', src: '../../assets/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
+		this.ui.progress = new Fx.ProgressBar(progress, {
+			fit: true
+		}).set(0);
 					
 		this.base.reposition();
 
@@ -166,9 +164,6 @@ FancyUpload3.Attach.File = new Class({
 	onComplete: function() {
 		this.ui.element.removeClass('file-uploading');
 
-		if (this.ui.progress) this.ui.progress = this.ui.progress.cancel().element.destroy();
-		this.ui.cancel = this.ui.cancel.destroy();
-		
 		if (this.response.error) {
 			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
 			this.errorMessage = msg.substitute($extend({name: this.name}, this.response));
@@ -177,6 +172,9 @@ FancyUpload3.Attach.File = new Class({
 			this.fireEvent('error', [this, this.response, this.errorMessage]);
 			return;
 		}
+		
+		if (this.ui.progress) this.ui.progress = this.ui.progress.cancel().element.destroy();
+		this.ui.cancel = this.ui.cancel.destroy();
 		
 		var response = this.response.text || '';
 		this.base.fireEvent('fileSuccess', [this, response]);

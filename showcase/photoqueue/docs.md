@@ -1,3 +1,6 @@
+Don't think that the uploader can handle only images! But since this showcase is called "Queued Photo Uploader", the
+selectable file-types are limited to images. Check the showcase JavaScript shown under this paragraph for more options.
+
 ### What happens?
 
 The PHP script does not save the files but [logs](../script.log) every request. Check the Firebug console for event debugging logs.

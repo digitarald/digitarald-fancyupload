@@ -8,6 +8,9 @@
 
 window.addEvent('domready', function() {
 
+	/**
+	 * Uploader instance
+	 */
 	var up = new FancyUpload3.Attach('demo-list', '#demo-attach, #demo-attach-2', {
 		path: '../../source/Swiff.Uploader.swf',
 		url: '../script.php',
@@ -19,13 +22,14 @@ window.addEvent('domready', function() {
 			files.each(function(file) {
 				new Element('li', {
 					'class': 'file-invalid',
-					html: file.validationErrorMessage || file.validationError,
 					events: {
 						click: function() {
 							this.destroy();
 						}
 					}
-				}).inject(this.list, 'bottom');
+				}).adopt(
+					new Element('span', {html: file.validationErrorMessage || file.validationError})
+				).inject(this.list, 'bottom');
 			}, this);	
 		},
 		
@@ -35,17 +39,26 @@ window.addEvent('domready', function() {
 		},
 		
 		onFileError: function(file) {
+			this.ui.cancel.set('html', 'Retry').removeEvents().addEvent('click', function() {
+				file.requeue();
+				return false;
+			});
+			
 			new Element('span', {
 				html: file.errorMessage,
 				'class': 'file-error'
-			})
-			file.ui.element.addClass('error');
+			}).inject(file.ui.size, 'after');
+		},
+		
+		onFileRequeue: function(file) {
+			this.ui.cancel.set('html', 'Cancel').removeEvents().addEvent('click', function() {
+				file.remove();
+				return false;
+			});
+			
+			this.ui.element.getElement('file-error').destroy();
 		}
 		
-	})
-
-	/**
-	 * Uploader instance
-	 */
+	});
 
 });
