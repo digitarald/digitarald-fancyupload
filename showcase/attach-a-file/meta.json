@@ -1,6 +1,6 @@
 {
 	"title": "Attach a File",
-	"locked": true,
+	"description": "A reduced and snappier interface (preview).",
 	"script_php": "../script.php",
 	"files": [
 		"http://ajax.googleapis.com/ajax/libs/mootools/1.2.2/mootools.js",

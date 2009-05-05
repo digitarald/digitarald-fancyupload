@@ -3,7 +3,7 @@
  * 
  * Updated to latest 3.0 API. Hopefully 100% compat!
  *
- * @version		3.0-rc0
+ * @version		3.0 rc1
  *
  * @license		MIT License
  *

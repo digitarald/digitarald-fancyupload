@@ -269,16 +269,16 @@ Complete ActionScript/JavaScript source, documentation and showcases are availab
 
 ### Packages
 
-* [**Working FancyUpload Installation**](http://cloud.github.com/downloads/digitarald/digitarald-fancyupload/working-fancyupload-photoqueue.rar) - The package that everybody waited for, a working FancyUpload to unpack and start play.
-* [**Sources including Showcases**](http://cloud.github.com/downloads/digitarald/digitarald-fancyupload/fancyupload-complete-source.rar) - The source and all showcases from this page in one package, the package for *web craftsmen* ;).
+* [**Working FancyUpload Installation**](http://cloud.github.com/downloads/digitarald/digitarald-fancyupload/working-fancyupload-photoqueue.zip) - The package that everybody waited for, a working FancyUpload to unpack and start play.
+* [**Sources including Showcases**](http://cloud.github.com/downloads/digitarald/digitarald-fancyupload/fancyupload-complete-source.zip) - The source and all showcases from this page in one package, the package for *web craftsmen* ;).
 
 ### Single Files
 
-* [Swiff.Uploader.js](source/Swiff.Uploader.js) - Flash based uploader, energizer for all possible upload interfaces
-* [Swiff.Uploader.swf](source/Swiff.Uploader.swf) - The movie used by the uploader class. *Use right-click/save-as!*
-* [FancyUpload2.js](source/FancyUpload2.js) - The famous & fancy interface, converted to the new 3.0 API.
-* [Uploader.js](source/Swiff.Uploader.js) - IFrame based class with the same API, but without progress.
-* [Fx.ProgressBar.js](source/Fx.ProgressBar.js) - Class to create and animate progress-bars.
+* [Swiff.Uploader.js](/project/fancyupload/3-0/source/Swiff.Uploader.js) - Flash based uploader, energizer for all possible upload interfaces
+* [Swiff.Uploader.swf](/project/fancyupload/3-0/source/Swiff.Uploader.swf) - The movie used by the uploader class. *Use right-click/save-as!*
+* [FancyUpload2.js](/project/fancyupload/3-0/source/FancyUpload2.js) - The famous & fancy interface, converted to the new 3.0 API.
+* [Uploader.js](/project/fancyupload/3-0/source/Swiff.Uploader.js) - IFrame based class with the same API, but without progress.
+* [Fx.ProgressBar.js](/project/fancyupload/3-0/source/Fx.ProgressBar.js) - Class to create and animate progress-bars.
 * The [images](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets) from the [showcases](#showcases) are also [downloadable](http://github.com/digitarald/digitarald-fancyupload/tree/master/assets).
 
 **You** can contribute by reporting problems and bugs in the [issue tracker](http://github.com/digitarald/digitarald-fancyupload/issues) on github or in the [support forum](/forums/) to discuss it.
