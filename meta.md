@@ -109,10 +109,14 @@ To change them during runtime, simply use `setOptions` and it does all the magic
 * select - (*function*) Function to execute when the user selected files in the dialog. Preferred events are *selectSuccess* and *selectFail*!
 	1. successFiles - (*array|null*) Raw file data for successfully added files.
 	2. failFiles - (*array|null*) Raw file data for invalid files that were not added.
-* selectSuccess - (*function*) Function to execute when files were selected and validated successfully!
+* selectSuccess - (*function*) Function to execute when files were selected and validated successfully.
 	1. successFiles - (*array|null*) Added file instances (see option *fileClass*).
-* selectFail - (*function*) Function to execute when files were selected and failed validation!
+* selectFail - (*function*) Function to execute when files were selected and failed validation.
 	1. failFiles - (*array|null*) Dismissed file instances (see option *fileClass*).
+* reposition - (*function*) Function to execute when `reposition` method is called on uploader (usually on window-resize).
+* beforeStart - (*function*) Function to execute when `start` method is called on uploader.
+* beforeStop - (*function*) Function to execute when `stop` method is called on uploader.
+* beforeRemove - (*function*) Function to execute when `remove` method is called on uploader.
 * buttonEnter - (*function*) Function to execute when the mouse enters the browse button.
 * buttonLeave - (*function*) Function to execute when the mouse leave the browse button.
 * buttonDown - (*function*) Function to execute when the mouse clicks the browse button. 

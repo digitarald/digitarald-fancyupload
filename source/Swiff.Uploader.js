@@ -78,7 +78,11 @@ Swiff.Uploader = new Class({
 		onFileOpen: $empty,
 		onFileProgress: $empty,
 		onFileComplete: $empty,
-		onFileRemove: $empty
+		onFileRemove: $empty,
+		
+		onBeforeStart: $empty,
+		onBeforeStop: $empty,
+		onBeforeRemove: $empty
 		*/
 	},
 
@@ -159,7 +163,7 @@ Swiff.Uploader = new Class({
 		if (Browser.Plugins.Flash.version < 9) {
 			this.fireEvent('fail', ['flash']);
 		} else {
-			this.verifyLoad.delay(500, this);
+			this.verifyLoad.delay(1000, this);
 		}
 	},
 	
@@ -261,14 +265,17 @@ Swiff.Uploader = new Class({
 	},
 
 	start: function() {
+		this.fireEvent('beforeStart');
 		this.remote('start');
 	},
 
 	stop: function() {
+		this.fireEvent('beforeStop');
 		this.remote('stop');
 	},
 
 	remove: function() {
+		this.fireEvent('beforeRemove');
 		this.remote('remove');
 	},
 

@@ -156,6 +156,7 @@ var Uploader = new Class({
 	},
 
 	start: function() {
+		this.fireEvent('beforeStart');
 		var queued = this.options.queued;
 		queued = (queued) ? ((queued > 1) ? queued : 1) : 0;
 
@@ -168,10 +169,12 @@ var Uploader = new Class({
 	},
 
 	stop: function() {
+		this.fireEvent('beforeStop');
 		for (var i = this.fileList.length; i--;) this.fileList[i].stop();
 	},
 
 	remove: function() {
+		this.fireEvent('beforeRemove');
 		for (var i = this.fileList.length; i--;) this.fileList[i].remove();
 	},
 

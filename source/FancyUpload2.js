@@ -57,11 +57,7 @@ var FancyUpload2 = new Class({
 		this.currentProgress = new Fx.ProgressBar(progress, {
 			text: new Element('span', {'class': 'progress-text'}).inject(progress, 'after')
 		});
-		
-		progress.addEvent('click', function() {
-			this.currentProgress.start($random(0, 100));
-		}.bind(this));
-		
+				
 		this.updateOverall();
 	},
 
