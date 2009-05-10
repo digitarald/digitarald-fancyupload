@@ -46,6 +46,7 @@ Swiff.Uploader = new Class({
 		allowDuplicates: false,
 
 		buttonImage: null,
+		policyFile: null,
 		
 		fileListMax: 0,
 		fileListSizeMax: 0,
@@ -229,7 +230,8 @@ Swiff.Uploader = new Class({
 			fileSizeMin: this.options.fileSizeMin,
 			fileSizeMax: this.options.fileSizeMax,
 			allowDuplicates: this.options.allowDuplicates,
-			buttonImage: this.options.buttonImage
+			buttonImage: this.options.buttonImage,
+			policyFile: this.options.policyFile
 		});
 
 		this.loaded = true;

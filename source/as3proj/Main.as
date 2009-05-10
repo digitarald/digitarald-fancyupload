@@ -70,7 +70,8 @@ package
 			fileSizeMin: 1,
 			fileSizeMax: null,// Official 100 MB limit for FileReference
 			allowDuplicates: false,
-
+			
+			policyFile: null,
 			buttonImage: null
 		};
 		
@@ -190,7 +191,14 @@ package
 		{
 			if (options_override != null) {
 				for (var prop:String in options) {
-					if (options_override.hasOwnProperty(prop)) options[prop] = options_override[prop];
+					if (options_override.hasOwnProperty(prop)) {
+						switch (prop) {
+							case 'policyFile':
+								if (options_override[prop] is String) Security.loadPolicyFile(options_override[prop]);
+								break;
+						}
+						options[prop] = options_override[prop];
+					}
 				}
 			}
 		}
