@@ -16,10 +16,10 @@ Features {#features}
 * Cancel running uploads, add files during upload
 * Everything is optional, documented and easy editable
 * New in 2.0
-  * Get the server response after upload for showing additional informations or previewing the image, etc.
-  * Shows the current upload speed and the time left
-  * Send additional request data via GET or POST variables
-  * Set the filename for the upload request
+	* Get the server response after upload for showing additional informations or previewing the image, etc.
+	* Shows the current upload speed and the time left
+	* Send additional request data via GET or POST variables
+	* Set the filename for the upload request
 * New in 3.0 (Completely rewritten API)
 	* Fully Flash 9 and 10 compatible and an additional IFrame-based uploader
 	* Browse-button can be an invisible overlay or an interactive image sprite
@@ -73,15 +73,18 @@ Documentation {#docs}
 * verbose: (*boolean*: defaults to false) Debug mode, logs messages and all events from Flash during development (using *console.info*).
 * target: (*element*: defaults to null) If given, the browse-element is overlayed with a transparent movie. The Events *click/mouseenter/mouseleave/disabled* are fired as events on *target*.
 * zIndex: (*number*: defaults to 9999) Only used if a *target* is given, this sets the z-index for the overlay.
-* buttonImage: (*string*: defaults to null) Sprite for the upload button, has to have 4 states vertical aligned: Normal, hovered, clicked and disabled. Make sure to adapt the options *width* and *height*.
+* buttonImage: (*string*: defaults to null) Sprite for the upload button, has to have 4 states vertically aligned: Normal, hovered, clicked and disabled. Make sure to adapt the options *width* and *height*.
+* policyFile: (*string*: defaults to null) Location the cross-domain policy file. See [Flash Security.loadPolicyFile](http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/system/Security.html#loadPolicyFile%28%29).
 * url: (*string*: defaults to null) URL to the server-side script (relative URLs are changed automatically to absolute paths). 
 * method: (*string*: defaults to 'post') If the method is 'get', *data* is appended as query-string to the URL. The upload will always be a POST request.
 * data: (*object|string*: defaults to null) Key/data values that are sent with the upload requests.
 * mergeData: (*boolean*: defaults to true) If true, the *data* option from uploader and file is merged (prioritised file data).
 * fieldName: (*string*: defaults to "Filedata") The key of the uploaded file on your server, similar to *name* in a file-input. Linux Flash ignores it, better avoid it.
 * fileSizeMin: (*number*: defaults to 1) Validates the minimal size of a selected file *byte*.
-* fileSizeMax: (*number*: defaults to 0) Validates the maximal size of a selected file (official limit is 100 MB for FileReference) 
+* fileSizeMax: (*number*: defaults to 0) Validates the maximal size of a selected file (official limit is 100 MB for FileReference, I tested up to 2 GB) 
 * allowDuplicates: (*boolean*: defaults to false) Validates that no duplicate files are added.
+* timeLimit: (*number*: default 30, 0 for linux) Timeout in seconds. If the upload is without progress, it is cancelled and event `complete` gets fired (with error string `timeout`). Occurs usually when the server sends an empty response (also on redirects).
+* fileList: (*boolean*: defaults to false) Validates that no duplicate files are added.
 * fileListMax: (*number*: defaults to 0) Validates the overall file count.
 * fileListSizeMax: (*number*: defaults to 0) Validates the overall file size in *byte*.
 * instantStart: (*boolean*: defaults to false) If true, the upload starts right after a successful file selection.

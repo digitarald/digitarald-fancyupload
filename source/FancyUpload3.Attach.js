@@ -1,7 +1,7 @@
 /**
  * FancyUpload.Attach - Flash meets Ajax for powerful and elegant uploads.
  *
- * @version		3.0 rc1
+ * @version		3.0 rc3
  *
  * @license		MIT License
  *

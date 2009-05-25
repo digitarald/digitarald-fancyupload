@@ -25,7 +25,7 @@
  * Only needed if you have a logged in user, see option appendCookieData,
  * which adds session id and other available cookies to the sent data.
  *
- * session_name('SID'); // whatever your session name is, adapt that!
+ * session_id($_POST['SID']); // whatever your session name is, adapt that!
  * session_start();
  */
 

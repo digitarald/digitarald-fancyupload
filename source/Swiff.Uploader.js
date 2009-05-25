@@ -1,11 +1,12 @@
 /**
  * Swiff.Uploader - Flash FileReference Control
  *
- * @version		3.0 rc1
+ * @version		3.0
  *
  * @license		MIT License
  *
- * @author		Harald Kirschner <mail [at] digitarald [dot] de>
+ * @author		Harald Kirschner <http://digitarald.de>
+ * @author		Valerio Proietti, <http://mad4milk.net>
  * @copyright	Authors
  */
 
@@ -42,8 +43,9 @@ Swiff.Uploader = new Class({
 		fieldName: null,
 
 		fileSizeMin: 1,
-		fileSizeMax: null, // Official limit is 100 MB for FileReference!
+		fileSizeMax: null, // Official limit is 100 MB for FileReference, but I tested up to 2Gb!
 		allowDuplicates: false,
+		timeLimit: (Browser.Platform.linux) ? 0 : 30,
 
 		buttonImage: null,
 		policyFile: null,
@@ -230,6 +232,7 @@ Swiff.Uploader = new Class({
 			fileSizeMin: this.options.fileSizeMin,
 			fileSizeMax: this.options.fileSizeMax,
 			allowDuplicates: this.options.allowDuplicates,
+			timeLimit: this.options.timeLimit,
 			buttonImage: this.options.buttonImage,
 			policyFile: this.options.policyFile
 		});
