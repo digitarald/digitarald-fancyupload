@@ -184,7 +184,7 @@ FancyUpload2.File = new Class({
 	onComplete: function() {
 		this.element.removeClass('file-uploading');
 		
-		this.base.currentText.set('html', 'Upload completed');
+		this.base.currentText.set('html', MooTools.lang.get('FancyUpload', 'uploadCompleted'));
 		this.base.currentProgress.start(100);
 		
 		if (this.response.error) {
@@ -221,6 +221,7 @@ FancyUpload2.File = new Class({
 		'currentTitle': 'File Progress',
 		'currentFile': 'Uploading "{name}"',
 		'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
+		'uploadCompleted': 'Upload completed',
 		'fileName': '{name}',
 		'remove': 'Remove',
 		'removeTitle': 'Click to remove this entry.',
