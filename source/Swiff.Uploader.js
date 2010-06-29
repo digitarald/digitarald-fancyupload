@@ -217,7 +217,7 @@ Swiff.Uploader = new Class({
 
 	initializeSwiff: function() {
 		// extracted options for the swf 
-		this.remote('initialize', {
+		this.remote('xInitialize', {
 			width: this.options.width,
 			height: this.options.height,
 			typeFilter: this.options.typeFilter,
@@ -260,44 +260,44 @@ Swiff.Uploader = new Class({
 			if (options.url) options.url = Swiff.Uploader.qualifyPath(options.url);
 			if (options.buttonImage) options.buttonImage = Swiff.Uploader.qualifyPath(options.buttonImage);
 			this.parent(options);
-			if (this.loaded) this.remote('setOptions', options);
+			if (this.loaded) this.remote('xSetOptions', options);
 		}
 		return this;
 	},
 
 	setEnabled: function(status) {
-		this.remote('setEnabled', status);
+		this.remote('xSetEnabled', status);
 	},
 
 	start: function() {
 		this.fireEvent('beforeStart');
-		this.remote('start');
+		this.remote('xStart');
 	},
 
 	stop: function() {
 		this.fireEvent('beforeStop');
-		this.remote('stop');
+		this.remote('xStop');
 	},
 
 	remove: function() {
 		this.fireEvent('beforeRemove');
-		this.remote('remove');
+		this.remote('xRemove');
 	},
 
 	fileStart: function(file) {
-		this.remote('fileStart', file.id);
+		this.remote('xFileStart', file.id);
 	},
 
 	fileStop: function(file) {
-		this.remote('fileStop', file.id);
+		this.remote('xFileStop', file.id);
 	},
 
 	fileRemove: function(file) {
-		this.remote('fileRemove', file.id);
+		this.remote('xFileRemove', file.id);
 	},
 
 	fileRequeue: function(file) {
-		this.remote('fileRequeue', file.id);
+		this.remote('xFileRequeue', file.id);
 	},
 
 	appendCookieData: function() {
@@ -460,7 +460,7 @@ Swiff.Uploader.File = new Class({
 	setOptions: function(options) {
 		if (options) {
 			if (options.url) options.url = Swiff.Uploader.qualifyPath(options.url);
-			this.base.remote('fileSetOptions', this.id, options);
+			this.base.remote('xFileSetOptions', this.id, options);
 			this.options = $merge(this.options, options);
 		}
 		return this;
