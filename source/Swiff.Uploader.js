@@ -22,8 +22,6 @@ Swiff.Uploader = new Class({
 		target: null,
 		zIndex: 9999,
 		
-		height: 30,
-		width: 100,
 		callBacks: null,
 		params: {
 			wMode: 'opaque',
@@ -35,6 +33,9 @@ Swiff.Uploader = new Class({
 		multiple: true,
 		queued: true,
 		verbose: false,
+		height: 30,
+		width: 100,
+		passStatus: null,
 
 		url: null,
 		method: null,
@@ -47,8 +48,8 @@ Swiff.Uploader = new Class({
 		allowDuplicates: false,
 		timeLimit: (Browser.Platform.linux) ? 0 : 30,
 
-		buttonImage: null,
 		policyFile: null,
+		buttonImage: null,
 		
 		fileListMax: 0,
 		fileListSizeMax: 0,
@@ -218,23 +219,24 @@ Swiff.Uploader = new Class({
 	initializeSwiff: function() {
 		// extracted options for the swf 
 		this.remote('xInitialize', {
-			width: this.options.width,
-			height: this.options.height,
 			typeFilter: this.options.typeFilter,
 			multiple: this.options.multiple,
 			queued: this.options.queued,
+			verbose: this.options.verbose,
+			width: this.options.width,
+			height: this.options.height,
+			passStatus: this.options.passStatus,
 			url: this.options.url,
 			method: this.options.method,
 			data: this.options.data,
 			mergeData: this.options.mergeData,
 			fieldName: this.options.fieldName,
-			verbose: this.options.verbose,
 			fileSizeMin: this.options.fileSizeMin,
 			fileSizeMax: this.options.fileSizeMax,
 			allowDuplicates: this.options.allowDuplicates,
 			timeLimit: this.options.timeLimit,
-			buttonImage: this.options.buttonImage,
-			policyFile: this.options.policyFile
+			policyFile: this.options.policyFile,
+			buttonImage: this.options.buttonImage
 		});
 
 		this.loaded = true;
