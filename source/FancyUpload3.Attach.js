@@ -1,13 +1,20 @@
-/**
- * FancyUpload.Attach - Flash meets Ajax for powerful and elegant uploads.
- *
- * @version		3.0 rc3
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <mail [at] digitarald [dot] de>
- * @copyright	Authors
- */
+/*
+---
+name: FancyUpload3.Attach
+
+description: FancyUpload.Attach - Flash meets Ajax for powerful and elegant uploads.
+
+requires: [Swiff.Uploader, Swiff.Uploader.File, Fx.ProgressBar, Core/Class]
+
+provides: [FancyUpload3, FancyUpload3.File]
+
+version: 3.0 rc3
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
 
 if (!window.FancyUpload3) var FancyUpload3 = {};
 

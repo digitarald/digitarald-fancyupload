@@ -1,15 +1,20 @@
-/**
- * FancyUpload - Flash meets Ajax for powerful and elegant uploads.
- * 
- * Updated to latest 3.0 API. Hopefully 100% compat!
- *
- * @version		3.0
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <http://digitarald.de>
- * @copyright	Authors
- */
+/*
+---
+name: FancyUpload2
+
+description: Flash meets Ajax for powerful and elegant uploads. Updated to latest 3.0 API. Hopefully 100% compat!
+
+requires: [Swiff.Uploader, Swiff.Uploader.File, Fx.ProgressBar, Core/Class]
+
+provides: [FancyUpload2, FancyUpload2.File]
+
+version: 3.0
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
 
 var FancyUpload2 = new Class({
 

@@ -1,13 +1,20 @@
-/**
- * Fx.ProgressBar
- *
- * @version		1.1
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <mail [at] digitarald [dot] de>
- * @copyright	Authors
- */
+/*
+---
+name: Fx.ProgressBar
+
+description: Fx.ProgressBar
+
+requires: [Core/Fx.Transitions, Core/Fx, Core/Class]
+
+provides: [Fx.ProgressBar]
+
+version: 1.1
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
 
 Fx.ProgressBar = new Class({
 

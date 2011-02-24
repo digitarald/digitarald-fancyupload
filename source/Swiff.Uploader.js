@@ -1,14 +1,20 @@
-/**
- * Swiff.Uploader - Flash FileReference Control
- *
- * @version		3.0
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <http://digitarald.de>
- * @author		Valerio Proietti, <http://mad4milk.net>
- * @copyright	Authors
- */
+/*
+---
+name: Swiff.Uploader
+
+description: Swiff.Uploader - Flash FileReference Control
+
+requires: [Core/Swiff, Core/Fx, Core/Class, Core/Class.Extras, Core/Browser, Core/Element]
+
+provides: [Swiff.Uploader, Swiff.Uploader.File]
+
+version: 3.0
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
 
 Swiff.Uploader = new Class({
 

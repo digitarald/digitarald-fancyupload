@@ -1,13 +1,20 @@
-/**
- * Uploader
- *
- * @version		1.0
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <mail [at] digitarald [dot] de>
- * @copyright	Authors
- */
+/*
+---
+name: Uploader
+
+description: Uploader
+
+requires: [Core/Browser, Core/Class, Core/Class.Extras, Core/Element, Core/Element.Events, Core/Element.Coordinates]
+
+provides: [Uploader, Uploader.File]
+
+version: 1.1
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
 
 var Uploader = new Class({
 
