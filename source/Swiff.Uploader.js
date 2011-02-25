@@ -18,7 +18,7 @@ author: Harald Kirschner <http://digitarald.de>
 
 (function($, $$){
 	
-var Swiff.Uploader = this.Swiff.Uploader = new Class({
+this.Swiff.Uploader = new Class({
 
 	Extends: Swiff,
 
