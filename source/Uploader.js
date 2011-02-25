@@ -4,7 +4,7 @@ name: Uploader
 
 description: Uploader
 
-requires: [Core/Browser, Core/Class, Core/Class.Extras, Core/Element, Core/Element.Events, Core/Element.Coordinates]
+requires: [Core/Browser, Core/Class, Core/Class.Extras, Core/Element, Core/Element.Event, Core/Element.Dimensions]
 
 provides: [Uploader, Uploader.File]
 
