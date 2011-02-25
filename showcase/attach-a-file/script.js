@@ -8,6 +8,8 @@
 
 window.addEvent('domready', function() {
 
+	var $ = document.id, $$ = document.getElements;
+	
 	/**
 	 * Uploader instance
 	 */
