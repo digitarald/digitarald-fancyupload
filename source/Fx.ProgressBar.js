@@ -16,7 +16,9 @@ author: Harald Kirschner <http://digitarald.de>
 ...
 */
 
-Fx.ProgressBar = new Class({
+(function($, $$){
+	
+var Fx.ProgressBar = this.Fx.ProgressBar = new Class({
 
 	Extends: Fx,
 
@@ -58,7 +60,7 @@ Fx.ProgressBar = new Class({
 	},
 
 	start: function(to, total) {
-		return this.parent(this.now, (arguments.length == 1) ? to.limit(0, 100) : to / total * 100);
+		return this.parent(this.now, (total == null) ? to.limit(0, 100) : to / total * 100);
 	},
 
 	set: function(to) {
@@ -76,3 +78,5 @@ Fx.ProgressBar = new Class({
 	}
 
 });
+	
+}).call(this, document.id, document.getElements);

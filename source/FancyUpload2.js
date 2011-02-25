@@ -4,7 +4,7 @@ name: FancyUpload2
 
 description: Flash meets Ajax for powerful and elegant uploads. Updated to latest 3.0 API. Hopefully 100% compat!
 
-requires: [Swiff.Uploader, Swiff.Uploader.File, Fx.ProgressBar, Core/Class]
+requires: [Swiff.Uploader, Swiff.Uploader.File, Fx.ProgressBar, Core/Class, More/Locale]
 
 provides: [FancyUpload2, FancyUpload2.File]
 
@@ -16,7 +16,9 @@ author: Harald Kirschner <http://digitarald.de>
 ...
 */
 
-var FancyUpload2 = new Class({
+(function($, $$){
+	
+var FancyUpload2 = this.FancyUpload2 = new Class({
 
 	Extends: Swiff.Uploader,
 	
@@ -25,7 +27,7 @@ var FancyUpload2 = new Class({
 		// compat
 		limitSize: 0,
 		limitFiles: 0,
-		validateFile: $lambda(true)
+		validateFile: Function.from(true)
 	},
 
 	initialize: function(status, list, options) {
@@ -95,11 +97,11 @@ var FancyUpload2 = new Class({
 	},
 
 	updateOverall: function() {
-		this.overallTitle.set('html', MooTools.lang.get('FancyUpload', 'progressOverall').substitute({
+		this.overallTitle.set('html', Locale.get('FancyUpload.progressOverall').substitute({
 			total: Swiff.Uploader.formatUnit(this.size, 'b')
 		}));
 		if (!this.size) {
-			this.currentTitle.set('html', MooTools.lang.get('FancyUpload', 'currentTitle'));
+			this.currentTitle.set('html', Locale.get('FancyUpload.currentTitle'));
 			this.currentText.set('html', '');
 		}
 	},
@@ -117,14 +119,14 @@ var FancyUpload2 = new Class({
 
 });
 
-FancyUpload2.File = new Class({
+var FancyUpload2 = this.FancyUpload2.File = new Class({
 	
 	Extends: Swiff.Uploader.File,
 
 	render: function() {
 		if (this.invalid) {
 			if (this.validationError) {
-				var msg = MooTools.lang.get('FancyUpload', 'validationErrors')[this.validationError] || this.validationError;
+				var msg = Locale.get('FancyUpload.validationErrors')[this.validationError] || this.validationError;
 				this.validationErrorMessage = msg.substitute({
 					name: this.name,
 					size: Swiff.Uploader.formatUnit(this.size, 'b'),
@@ -152,8 +154,8 @@ FancyUpload2.File = new Class({
 			new Element('a', {
 				'class': 'file-remove',
 				href: '#',
-				html: MooTools.lang.get('FancyUpload', 'remove'),
-				title: MooTools.lang.get('FancyUpload', 'removeTitle'),
+				html: Locale.get('FancyUpload.remove'),
+				title: Locale.get('FancyUpload.removeTitle'),
 				events: {
 					click: function() {
 						this.remove();
@@ -161,7 +163,7 @@ FancyUpload2.File = new Class({
 					}.bind(this)
 				}
 			}),
-			new Element('span', {'class': 'file-name', 'html': MooTools.lang.get('FancyUpload', 'fileName').substitute(this)}),
+			new Element('span', {'class': 'file-name', 'html': Locale.get('FancyUpload.fileName').substitute(this)}),
 			this.info
 		).inject(this.base.list);
 	},
@@ -173,12 +175,12 @@ FancyUpload2.File = new Class({
 	onStart: function() {
 		this.element.addClass('file-uploading');
 		this.base.currentProgress.cancel().set(0);
-		this.base.currentTitle.set('html', MooTools.lang.get('FancyUpload', 'currentFile').substitute(this));
+		this.base.currentTitle.set('html', Locale.get('FancyUpload.currentFile').substitute(this));
 	},
 
 	onProgress: function() {
 		this.base.overallProgress.start(this.base.percentLoaded);
-		this.base.currentText.set('html', MooTools.lang.get('FancyUpload', 'currentProgress').substitute({
+		this.base.currentText.set('html', Locale.get('FancyUpload.currentProgress').substitute({
 			rate: (this.progress.rate) ? Swiff.Uploader.formatUnit(this.progress.rate, 'bps') : '- B',
 			bytesLoaded: Swiff.Uploader.formatUnit(this.progress.bytesLoaded, 'b'),
 			timeRemaining: (this.progress.timeRemaining) ? Swiff.Uploader.formatUnit(this.progress.timeRemaining, 's') : '-'
@@ -189,12 +191,12 @@ FancyUpload2.File = new Class({
 	onComplete: function() {
 		this.element.removeClass('file-uploading');
 		
-		this.base.currentText.set('html', MooTools.lang.get('FancyUpload', 'uploadCompleted'));
+		this.base.currentText.set('html', Locale.get('FancyUpload.uploadCompleted'));
 		this.base.currentProgress.start(100);
 		
 		if (this.response.error) {
-			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
-			this.errorMessage = msg.substitute($extend({
+			var msg = Locale.get('FancyUpload.errors')[this.response.error] || '{error} #{code}';
+			this.errorMessage = msg.substitute(Object.append({
 				name: this.name,
 				size: Swiff.Uploader.formatUnit(this.size, 'b')
 			}, this.response));
@@ -208,7 +210,7 @@ FancyUpload2.File = new Class({
 
 	onError: function() {
 		this.element.addClass('file-failed');
-		var error = MooTools.lang.get('FancyUpload', 'fileError').substitute(this);
+		var error = Locale.get('FancyUpload.fileError').substitute(this);
 		this.info.set('html', '<strong>' + error + ':</strong> ' + this.errorMessage);
 	},
 
@@ -219,39 +221,28 @@ FancyUpload2.File = new Class({
 	
 });
 
-// Avoiding MooTools.lang dependency
-(function() {
-	var phrases = {
-		'progressOverall': 'Overall Progress ({total})',
-		'currentTitle': 'File Progress',
-		'currentFile': 'Uploading "{name}"',
-		'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
-		'uploadCompleted': 'Upload completed',
-		'fileName': '{name}',
-		'remove': 'Remove',
-		'removeTitle': 'Click to remove this entry.',
-		'fileError': 'Upload failed',
-		'validationErrors': {
-			'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
-			'sizeLimitMin': 'File <em>{name}</em> (<em>{size}</em>) is too small, the minimal file size is {fileSizeMin}.',
-			'sizeLimitMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, the maximal file size is <em>{fileSizeMax}</em>.',
-			'fileListMax': 'File <em>{name}</em> could not be added, amount of <em>{fileListMax} files</em> exceeded.',
-			'fileListSizeMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, overall filesize of <em>{fileListSizeMax}</em> exceeded.'
-		},
-		'errors': {
-			'httpStatus': 'Server returned HTTP-Status <code>#{code}</code>',
-			'securityError': 'Security error occured ({text})',
-			'ioError': 'Error caused a send or load operation to fail ({text})'
-		}
-	};
-	
-	if (MooTools.lang) {
-		MooTools.lang.set('en-US', 'FancyUpload', phrases);
-	} else {
-		MooTools.lang = {
-			get: function(from, key) {
-				return phrases[key];
-			}
-		};
+Locale.define('en-US', 'FancyUpload', {
+	'progressOverall': 'Overall Progress ({total})',
+	'currentTitle': 'File Progress',
+	'currentFile': 'Uploading "{name}"',
+	'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
+	'uploadCompleted': 'Upload completed',
+	'fileName': '{name}',
+	'remove': 'Remove',
+	'removeTitle': 'Click to remove this entry.',
+	'fileError': 'Upload failed',
+	'validationErrors': {
+		'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
+		'sizeLimitMin': 'File <em>{name}</em> (<em>{size}</em>) is too small, the minimal file size is {fileSizeMin}.',
+		'sizeLimitMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, the maximal file size is <em>{fileSizeMax}</em>.',
+		'fileListMax': 'File <em>{name}</em> could not be added, amount of <em>{fileListMax} files</em> exceeded.',
+		'fileListSizeMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, overall filesize of <em>{fileListSizeMax}</em> exceeded.'
+	},
+	'errors': {
+		'httpStatus': 'Server returned HTTP-Status <code>#{code}</code>',
+		'securityError': 'Security error occured ({text})',
+		'ioError': 'Error caused a send or load operation to fail ({text})'
 	}
-})();
+});
+	
+}).call(this, document.id, document.getElements);
