@@ -274,14 +274,18 @@ Uploader.File = new Class({
 
 		this.status = Uploader.STATUS_COMPLETE;
 
-		var win = new Window(this.iframe.contentWindow);
-		var doc = new Document(win.document);
-		
-		this.response = {
-			window: win,
-			document: doc,
-			text: doc.innerHTML || ''
-		};
+		try {
+			var win = new Window(this.iframe.contentWindow);
+			var doc = new Document(win.document);
+			
+			this.response = {
+				window: win,
+				document: doc,
+				text: doc.innerHTML || ''
+			};
+		} catch(e) {
+			this.response = {};
+		}
 
 		this.base.uploading--;
 		this.dates.complete = new Date();
