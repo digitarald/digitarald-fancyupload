@@ -107,16 +107,15 @@ FancyUpload3.Attach.File = new Class({
 			return;
 		}
 		
-		this.addEvents({
-			'open': this.onOpen,
-			'remove': this.onRemove,
-			'requeue': this.onRequeue,
-			'progress': this.onProgress,
-			'stop': this.onStop,
-			'complete': this.onComplete,
-			'error': this.onError
-		});
-		
+        this.addEvents({
+            'open': this.onOpen,
+            'remove': this.onRemove,
+            'requeue': this.onRequeue,
+            'progress': this.onProgress,
+            'stop': this.onStop,
+            'complete': this.onComplete,
+            'error': this.onError
+        });		
 		this.ui = {};
 		
 		this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
@@ -135,7 +134,7 @@ FancyUpload3.Attach.File = new Class({
 			this.ui.cancel
 		).inject(this.base.list).highlight();
 		
-		var progress = new Element('img', {'class': 'file-progress', src: '../../assets/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
+		var progress = new Element('img', {'class': 'file-progress', src: window.theme_image_dir + 'backgrounds/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
 		this.ui.progress = new Fx.ProgressBar(progress, {
 			fit: true
 		}).set(0);
@@ -220,3 +219,238 @@ FancyUpload3.Attach.File = new Class({
 	}
 	
 })();
+
+
+FancyUpload3.HTML5 = new Class({
+    Implements: [Events, Options],
+    options: {
+        appendCookieData: false,
+        data: {
+            // indicate that we are using the future!
+            html5: 1,
+            typeFilter: null,
+            fileSizeMax: null
+        }
+        /*
+        onLoad: $empty,
+        onFail: $empty,
+        onStart: $empty,
+        onQueue: $empty,
+        onComplete: $empty,
+        onBrowse: $empty,
+        onDisabledBrowse: $empty,
+        onCancel: $empty,
+        onSelect: $empty,
+        onSelectSuccess: $empty,
+        onSelectFail: $empty,
+        
+        onButtonEnter: $empty,
+        onButtonLeave: $empty,
+        onButtonDown: $empty,
+        onButtonDisable: $empty,
+        
+        onFileStart: $empty,
+        onFileStop: $empty,
+        onFileRequeue: $empty,
+        onFileOpen: $empty,
+        onFileProgress: $empty,
+        onFileComplete: $empty,
+        onFileRemove: $empty,
+        
+        onBeforeStart: $empty,
+        onBeforeStop: $empty,
+        onBeforeRemove: $empty
+*/
+    },
+    eSelects: null,
+    initialize: function(list, selects, oOptions)
+    {
+        this.setOptions(oOptions);
+        this.list = list;
+        selects.addEvent("change", this.onSelect.bind(this));
+        if(typeOf(selects) != "elements")
+        {
+            selects = $$(selects);
+        }
+        this.eSelects = selects;
+    },
+
+    uploadProgress: function(oEvent)
+    {
+        var iPercentLoaded = Math.round(oEvent.loaded * 100 / oEvent.total);
+        this.filedata = oEvent;
+        
+        if (this.ui.progress) this.ui.progress.start(iPercentLoaded);
+        this.fireEvent("fileProgress", this);
+    },
+    uploadComplete: function(oEvent)
+    {
+        this.response = {
+            text: oEvent.target.responseText
+        };
+        this.ui.element.removeClass('file-uploading');
+        
+        if (this.ui.progress) this.ui.progress = this.ui.progress.cancel().element.destroy();
+        this.ui.cancel = this.ui.cancel.destroy();
+        
+        this.fireEvent("fileSuccess", this);
+    },
+    uploadFailed: function(oEvent)
+    {
+        this.ui.element.removeClass('file-uploading');
+        this.fireEvent("fail", this);
+    },
+    uploadCanceled: function(oEvent)
+    {
+        this.ui.element.removeClass('file-uploading');
+        
+        this.fireEvent("cancel", this);
+    },
+
+    start: function() {
+        var oFormData = new FormData();
+        oFormData.append("Filedata", $(this.options.fileinput).files[0]);
+        Object.each(this.options.data, function(mValue, mKey) {
+            oFormData.append(mKey, mValue);
+        });
+        this.oXHR = new XMLHttpRequest();
+        this.oXHR.upload.addEventListener("progress", this.uploadProgress.bind(this), false);
+        this.oXHR.addEventListener("load", this.uploadComplete.bind(this), false);
+        this.oXHR.addEventListener("error", this.uploadFailed.bind(this), false);
+        this.oXHR.addEventListener("abort", this.uploadCanceled.bind(this), false);
+        this.oXHR.open("POST", this.options.url);
+        this.oXHR.send(oFormData);
+        this.fireEvent("fileStart");
+    },
+    checkFileSize: function(oFile)
+    {
+        var bRetval = true;
+        
+        if(this.options.fileSizeMax != null && oFile.size > this.options.fileSizeMax)
+        {
+            bRetval = false;
+            
+            this.fireEvent("onSelectFail", [[{
+                validationErrorMessage: "Size limit exceeded. Maximum size allowed: " + 
+                    Swiff.Uploader.formatUnit(this.options.fileSizeMax, 'b')
+                }]]);
+        }
+        
+        return bRetval;
+    },
+    checkFileType: function(oFile)
+    {
+        var bRetval = true,
+            strErrorTypes;
+        
+        if(this.options.typeFilter != null)
+        {
+            Object.each(this.options.typeFilter, function(strTypes, strTextTypes)
+            {
+                strErrorTypes = strTextTypes;
+                bRetval = strTypes.split(";").some(function(strType) {
+                    return oFile.name.match(
+                        new RegExp("\." + strType.replace(/\s*\*\./g, '') + "$", "i")
+                        );
+                });
+            });
+        }
+        
+        if(!bRetval)
+        {
+            this.fireEvent("onSelectFail", [[{
+                validationErrorMessage: "Please choose a file of type: " + strErrorTypes
+                }]]);
+        }
+        
+        return bRetval;
+    },
+    onSelect: function(oEvent) 
+    {
+        var oFile = oEvent.target.files[0];
+        if (oFile) 
+        {
+            if(!this.checkFileSize(oFile))
+            {
+                oEvent.stop();
+            }
+            else if(!this.checkFileType(oFile))
+            {
+                oEvent.stop();
+            }
+            else
+            {
+                // success!
+                this.options.fileinput = oEvent.target;
+
+                this.remove();
+                
+                this.ui = {};
+                
+                this.ui.element = new Element('li', {'class': 'file'});
+                this.ui.title = new Element('span', {'class': 'file-title', text: oFile.name});
+                this.ui.size = new Element('span', {'class': 'file-size', text: Swiff.Uploader.formatUnit(oFile.size, 'b')});
+                
+                this.ui.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
+                this.ui.cancel.addEvent('click', function() {
+                    this.remove();
+                    return false;
+                }.bind(this));
+                
+                this.ui.element.adopt(
+                    this.ui.title,
+                    this.ui.size,
+                    this.ui.cancel
+                ).inject(this.list).highlight();
+                
+                var progress = new Element('img', {
+                    'class': 'file-progress', 
+                    src: window.theme_image_dir + 'backgrounds/progress-bar/bar.gif'
+                    }).inject(this.ui.size, 'after');
+                this.ui.progress = new Fx.ProgressBar(progress, {
+                    fit: true
+                }).set(0);
+                
+                this.start();
+            }
+        }
+    },
+    reset: function() 
+    {
+        var eNewSelects = [];
+        
+        this.remove();
+        this.eSelects.each(function(eInput) 
+        {
+            // Now "reset" the input by cloning/replacing it
+            // NOTE: This is pretty damn hacky
+            eInputClone = eInput.clone(false,true);
+            eInputClone.cloneEvents(eInput);
+            eInputClone.replaces(eInput);
+            eInput.destroy();
+            eNewSelects[eNewSelects.length] = eInputClone;
+        });
+        this.eSelects = $$(eNewSelects);
+        this.fireEvent("reset");
+    },
+    remove: function()
+    {
+        //if(Object.defined(this, "ui.element"))
+        //{
+        //   this.ui.element.destroy();
+        //    this.ui = {};
+        //}
+        
+        // Since we're only allowing one file at a time,
+        // just destroy the entire list.
+        this.list.empty();
+        this.ui = {};
+        
+        this.fireEvent("remove");
+    },
+    reposition: function(oCoords)
+    {
+        // don't need to position anything.
+    }
+
+});
