@@ -91,8 +91,8 @@ var Uploader = new Class({
 				
 		var align = (Browser.Engine.trident) ? 'left' : 'right';
 		doc.body.innerHTML = '<form method="post" enctype="multipart/form-data" id="form">' +
-			'<input type="file" id="file" style="position:absolute;' + align + ':0;top:0" />' +
-			'<input type="submit" /><div id="data"></div></form>' + 
+			'<input type="submit" /><div id="data"></div>' +
+			'<input type="file" id="file" style="position:absolute;' + align + ':0;top:0" /></form>' +
 			'<style type="text/css">*{margin:0;padding:0;border:0;overflow:hidden;cursor:pointer;}</style>';
 		
 		this.doc = doc;
@@ -274,14 +274,18 @@ Uploader.File = new Class({
 
 		this.status = Uploader.STATUS_COMPLETE;
 
-		var win = new Window(this.iframe.contentWindow);
-		var doc = new Document(win.document);
-		
-		this.response = {
-			window: win,
-			document: doc,
-			text: doc.innerHTML || ''
-		};
+		try {
+			var win = new Window(this.iframe.contentWindow);
+			var doc = new Document(win.document);
+			
+			this.response = {
+				window: win,
+				document: doc,
+				text: doc.innerHTML || ''
+			};
+		} catch(e) {
+			this.response = {};
+		}
 
 		this.base.uploading--;
 		this.dates.complete = new Date();
@@ -336,7 +340,7 @@ Uploader.File = new Class({
 		var form = doc.forms[0];
 		form.action = merged.url;
 
-		var input = form.elements[0];
+		var input = form.elements[form.elements.length - 1];
 		input.name = merged.fieldName || 'Filedata';
 
 		this.status = Uploader.STATUS_RUNNING;
