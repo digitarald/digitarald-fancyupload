@@ -1,15 +1,24 @@
-/**
- * FancyUpload.Attach - Flash meets Ajax for powerful and elegant uploads.
- *
- * @version		3.0 rc3
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <mail [at] digitarald [dot] de>
- * @copyright	Authors
- */
+/*
+---
+name: FancyUpload3.Attach
 
-if (!window.FancyUpload3) var FancyUpload3 = {};
+description: FancyUpload.Attach - Flash meets Ajax for powerful and elegant uploads.
+
+requires: [Swiff.Uploader, Swiff.Uploader.File, Fx.ProgressBar, Core/Class, More/Locale]
+
+provides: [FancyUpload3, FancyUpload3.File]
+
+version: 3.0 rc3
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
+
+(function($, $$){
+	
+var FancyUpload3 = this.FancyUpload3 || (this.FancyUpload3 = {});
 
 FancyUpload3.Attach = new Class({
 
@@ -79,7 +88,7 @@ FancyUpload3.Attach = new Class({
 	},
 	
 	start: function() {
-		if (Browser.Platform.linux && window.confirm(MooTools.lang.get('FancyUpload', 'linuxWarning'))) return this;
+		if (Browser.Platform.linux && window.confirm(Locale.get('FancyUpload.linuxWarning'))) return this;
 		return this.parent();
 	}
 	
@@ -93,7 +102,7 @@ FancyUpload3.Attach.File = new Class({
 		
 		if (this.invalid) {
 			if (this.validationError) {
-				var msg = MooTools.lang.get('FancyUpload', 'validationErrors')[this.validationError] || this.validationError;
+				var msg = Locale.get('FancyUpload.validationErrors')[this.validationError] || this.validationError;
 				this.validationErrorMessage = msg.substitute({
 					name: this.name,
 					size: Swiff.Uploader.formatUnit(this.size, 'b'),
@@ -166,8 +175,8 @@ FancyUpload3.Attach.File = new Class({
 		this.ui.element.removeClass('file-uploading');
 
 		if (this.response.error) {
-			var msg = MooTools.lang.get('FancyUpload', 'errors')[this.response.error] || '{error} #{code}';
-			this.errorMessage = msg.substitute($extend({name: this.name}, this.response));
+			var msg = Locale.get('FancyUpload.errors')[this.response.error] || '{error} #{code}';
+			this.errorMessage = msg.substitute(Object.append({name: this.name}, this.response));
 			
 			this.base.fireEvent('fileError', [this, this.response, this.errorMessage]);
 			this.fireEvent('error', [this, this.response, this.errorMessage]);
@@ -187,36 +196,23 @@ FancyUpload3.Attach.File = new Class({
 
 });
 
-//Avoiding MooTools.lang dependency
-(function() {
+Locale.define('en-US', 'FancyUpload', {
+	'fileName': '{name}',
+	'cancel': 'Cancel',
+	'cancelTitle': 'Click to cancel and remove this entry.',
+	'validationErrors': {
+		'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
+		'sizeLimitMin': 'File <em>{name}</em> (<em>{size}</em>) is too small, the minimal file size is {fileSizeMin}.',
+		'sizeLimitMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, the maximal file size is <em>{fileSizeMax}</em>.',
+		'fileListMax': 'File <em>{name}</em> could not be added, amount of <em>{fileListMax} files</em> exceeded.',
+		'fileListSizeMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, overall filesize of <em>{fileListSizeMax}</em> exceeded.'
+	},
+	'errors': {
+		'httpStatus': 'Server returned HTTP-Status #{code}',
+		'securityError': 'Security error occured ({text})',
+		'ioError': 'Error caused a send or load operation to fail ({text})'
+	},
+	'linuxWarning': 'Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nDo you want to start the upload anyway?'
+});
 	
-	var phrases = {
-		'fileName': '{name}',
-		'cancel': 'Cancel',
-		'cancelTitle': 'Click to cancel and remove this entry.',
-		'validationErrors': {
-			'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
-			'sizeLimitMin': 'File <em>{name}</em> (<em>{size}</em>) is too small, the minimal file size is {fileSizeMin}.',
-			'sizeLimitMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, the maximal file size is <em>{fileSizeMax}</em>.',
-			'fileListMax': 'File <em>{name}</em> could not be added, amount of <em>{fileListMax} files</em> exceeded.',
-			'fileListSizeMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, overall filesize of <em>{fileListSizeMax}</em> exceeded.'
-		},
-		'errors': {
-			'httpStatus': 'Server returned HTTP-Status #{code}',
-			'securityError': 'Security error occured ({text})',
-			'ioError': 'Error caused a send or load operation to fail ({text})'
-		},
-		'linuxWarning': 'Warning: Due to a misbehaviour of Adobe Flash Player on Linux,\nthe browser will probably freeze during the upload process.\nDo you want to start the upload anyway?'
-	};
-	
-	if (MooTools.lang) {
-		MooTools.lang.set('en-US', 'FancyUpload', phrases);
-	} else {
-		MooTools.lang = {
-			get: function(from, key) {
-				return phrases[key];
-			}
-		};
-	}
-	
-})();
+}).call(this, document.id, document.getElements);

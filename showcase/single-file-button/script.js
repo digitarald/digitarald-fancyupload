@@ -8,6 +8,8 @@
 
 window.addEvent('domready', function() {
 
+	var $ = document.id, $$ = document.getElements;
+	
 	// One Roar instance for our notofications, positioned in the top-right corner of our demo.
 	var log = new Roar({
 		container: $('demo'),

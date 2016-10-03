@@ -8,6 +8,8 @@
 
 window.addEvent('domready', function() {
 
+	var $ = document.id, $$ = document.getElements;
+	
 	var link = $('select-0');
 
 	var linkIdle = link.get('html');

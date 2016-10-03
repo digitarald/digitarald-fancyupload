@@ -8,6 +8,8 @@
 
 window.addEvent('domready', function() {
 
+	var $ = document.id, $$ = document.getElements;
+	
 	// reusing elements
 	var list = $('file-list-0');
 

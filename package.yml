@@ -1,0 +1,18 @@
+name: "FancyUpload"
+
+web: "http://digitarald.de/project/fancyupload"
+
+description: "FancyUpload is a file-input replacement which features an unobtrusive, multiple-file selection menu and queued upload with an animated progress bar."
+
+license: "MIT License"
+
+copyright: "&copy; [digitarald](http://digitarald.de)"
+
+authors: "Harald Kirschner <mail@digitarald.de>"
+
+sources:
+  - "source/FancyUpload2.js"
+  - "source/FancyUpload3.Attach.js"
+  - "source/Fx.ProgressBar.js"
+  - "source/Swiff.Uploader.js"
+  - "source/Uploader.js"

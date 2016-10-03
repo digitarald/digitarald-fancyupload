@@ -8,6 +8,8 @@
 
 window.addEvent('domready', function() { // wait for the content
 
+	var $ = document.id, $$ = document.getElements;
+
 	// our uploader instance 
 	
 	var up = new FancyUpload2($('demo-status'), $('demo-list'), { // options object
@@ -76,7 +78,7 @@ window.addEvent('domready', function() { // wait for the content
 				new Element('li', {
 					'class': 'validation-error',
 					html: file.validationErrorMessage || file.validationError,
-					title: MooTools.lang.get('FancyUpload', 'removeTitle'),
+					title: Locale.get('FancyUpload.removeTitle'),
 					events: {
 						click: function() {
 							this.destroy();
@@ -92,14 +94,14 @@ window.addEvent('domready', function() { // wait for the content
 		 * to send something else than JSON or different items).
 		 */
 		onFileSuccess: function(file, response) {
-			var json = new Hash(JSON.decode(response, true) || {});
+			var json = JSON.decode(response, true) || {};
 			
-			if (json.get('status') == '1') {
+			if (json.status == '1') {
 				file.element.addClass('file-success');
-				file.info.set('html', '<strong>Image was uploaded:</strong> ' + json.get('width') + ' x ' + json.get('height') + 'px, <em>' + json.get('mime') + '</em>)');
+				file.info.set('html', '<strong>Image was uploaded:</strong> ' + json.width + ' x ' + json.height + 'px, <em>' + json.mime + '</em>)');
 			} else {
 				file.element.addClass('file-failed');
-				file.info.set('html', '<strong>An error occured:</strong> ' + (json.get('error') ? (json.get('error') + ' #' + json.get('code')) : response));
+				file.info.set('html', '<strong>An error occured:</strong> ' + (json.error ? (json.error + ' #' + json.code) : response));
 			}
 		},
 		

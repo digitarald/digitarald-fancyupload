@@ -1,15 +1,24 @@
-/**
- * Uploader
- *
- * @version		1.0
- *
- * @license		MIT License
- *
- * @author		Harald Kirschner <mail [at] digitarald [dot] de>
- * @copyright	Authors
- */
+/*
+---
+name: Uploader
 
-var Uploader = new Class({
+description: Uploader
+
+requires: [Core/Browser, Core/Class, Core/Class.Extras, Core/Element, Core/Element.Event, Core/Element.Dimensions]
+
+provides: [Uploader, Uploader.File]
+
+version: 1.1
+
+license: MIT License
+
+author: Harald Kirschner <http://digitarald.de>
+...
+*/
+
+(function($, $$){
+
+var Uploader = this.Uploader = new Class({
 
 	Implements: [Options, Events],
 
@@ -52,10 +61,10 @@ var Uploader = new Class({
 		this.box.inject(this.options.container || document.body);
 
 		this.addEvents({
-			buttonEnter: this.targetRelay.bind(this, ['mouseenter']),
-			buttonLeave: this.targetRelay.bind(this, ['mouseleave']),
-			buttonDown: this.targetRelay.bind(this, ['mousedown']),
-			buttonDisable: this.targetRelay.bind(this, ['disable'])
+			buttonEnter: this.targetRelay.bind(this, 'mouseenter'),
+			buttonLeave: this.targetRelay.bind(this, 'mouseleave'),
+			buttonDown: this.targetRelay.bind(this, 'mousedown'),
+			buttonDisable: this.targetRelay.bind(this, 'disable')
 		});
 
 		this.uploading = 0;
@@ -87,7 +96,7 @@ var Uploader = new Class({
 		var doc = this.iframe.contentWindow.document;
 		
 		if (!doc || !doc.body) return;
-		$clear(this.runner);
+		clearTimeout(this.runner);
 				
 		var align = (Browser.Engine.trident) ? 'left' : 'right';
 		doc.body.innerHTML = '<form method="post" enctype="multipart/form-data" id="form">' +
@@ -95,7 +104,7 @@ var Uploader = new Class({
 			'<input type="submit" /><div id="data"></div></form>' + 
 			'<style type="text/css">*{margin:0;padding:0;border:0;overflow:hidden;cursor:pointer;}</style>';
 		
-		this.doc = doc;
+		this.doc = doc;Object.merge
 		
 		this.processIBody.delay(50, this);
 	},
@@ -108,7 +117,7 @@ var Uploader = new Class({
 			return;
 		}
 		
-		$extend(this.file, {
+		Object.append(this.file, {
 			onmousedown: function() {
 				if (Browser.Engine.presto) return true;
 				(function() {
@@ -185,7 +194,7 @@ var Uploader = new Class({
 
 });
 
-$extend(Uploader, {
+Object.append(Uploader, {
 
 	STATUS_QUEUED: 0,
 	STATUS_RUNNING: 1,
@@ -310,11 +319,11 @@ Uploader.File = new Class({
 		more.innerHTML = '';
 		if (merged.data) {
 			if (merged.mergeData && base.data && options.data) {
-				if ($type(base.data) == 'string') merged.data = base.data + '&' + options.data;
-				else merged.data = $merge(base.data, options.data);
+				if (typeOf(base.data) == 'string') merged.data = base.data + '&' + options.data;
+				else merged.data = Object.merge(base.data, options.data);
 			}
 			
-			var query = ($type(merged.data) == 'string') ? merged.data : Hash.toQueryString(merged.data);
+			var query = (typeOf(merged.data) == 'string') ? merged.data : Hash.toQueryString(merged.data);
 			
 			if (query.length) {
 				if (merged.method == 'get') {
@@ -379,3 +388,5 @@ Uploader.File = new Class({
 	}
 
 });
+
+}).call(this, document.id, document.getElements);
